@@ -108,7 +108,13 @@ export const Player: React.FC<PlayerProps> = observer(props => {
         genres={selectedSermon.Genres ?? []}
         passages={selectedSermon.Passages ?? []}
       />
-      <SafeAreaView style={{margin: 20, minWidth: '95%'}}>
+      <SafeAreaView
+        style={{
+          marginTop: 50,
+          marginLeft: 20,
+          marginRight: 20,
+          minWidth: '95%',
+        }}>
         <ModalHeader
           onClose={() => userSessionStore.setPlayerModalVisible(false)}
         />
