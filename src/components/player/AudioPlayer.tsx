@@ -11,7 +11,6 @@ import {ArtistView} from '../views/ArtistView';
 import {Appearance} from '../../appearance';
 import {SermonInfoModal} from './SermonInfoModal';
 import {DWGButton} from '../DWGButton';
-import {useControlCenter} from '../../hooks/useControlCenter';
 import {Artist, Genre, Book} from '../../types/userSessionStoreTypes';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {CommentView} from '../views/CommentView';
@@ -29,13 +28,18 @@ interface PlayerProps {
 export const Player: React.FC<PlayerProps> = observer(props => {
   const [initialPosition, setInitialPosition] = useState(0);
   const {playerStore, userSessionStore, storageStore} = useStores();
-  const controlCenter = useControlCenter();
   const {selectedSermon} = userSessionStore;
   const netInfo = useNetInfo();
 
   if (!selectedSermon) return null;
 
-  const {paused, currentTime, updatePaused, seek, isBuffering} = playerStore;
+  const {
+    paused,
+    position: currentTime,
+    updatePaused,
+    seek,
+    isBuffering,
+  } = playerStore;
 
   useEffect(() => {
     return () => {
@@ -46,7 +50,6 @@ export const Player: React.FC<PlayerProps> = observer(props => {
   }, []);
 
   useEffect(() => {
-    controlCenter.init();
     const sermonWithSavedPosition = storageStore.sermonsPositions.find(
       savedSermon => savedSermon.id === selectedSermon.id,
     );
@@ -62,7 +65,6 @@ export const Player: React.FC<PlayerProps> = observer(props => {
         initialPosition,
         userSessionStore.localPathMp3,
       );
-      controlCenter.setNewSermon(selectedSermon);
       updatePaused(false);
       storageStore.addSermonToHistoryList(selectedSermon);
     }

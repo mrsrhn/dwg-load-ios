@@ -37,11 +37,11 @@ export const useControlCenter = () => {
       });
 
       MusicControl.on(Command.skipForward, () => {
-        playerStore.seek(playerStore.currentTime + 10);
+        playerStore.seek(playerStore.position + 10);
       });
 
       MusicControl.on(Command.skipBackward, () => {
-        playerStore.seek(playerStore.currentTime - 10);
+        playerStore.seek(playerStore.position - 10);
       });
     }
   };

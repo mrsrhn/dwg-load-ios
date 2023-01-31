@@ -1,7 +1,6 @@
 import React, {useRef, useEffect} from 'react';
 import {observer} from 'mobx-react-lite';
 import Sound, {LoadError} from 'react-native-video';
-import {useControlCenter} from '../hooks/useControlCenter';
 import Toast from 'react-native-simple-toast';
 import {strings} from '../strings';
 import {useStores} from '../hooks/useStores';
@@ -13,7 +12,6 @@ export const SoundComponent = observer(() => {
   const {playerStore, storageStore, userSessionStore, apiStore} = useStores();
   const [key, setKey] = React.useState(0);
 
-  const controlCenter = useControlCenter();
   const [newSermonInitialized, setNewSermonInitialized] = React.useState(false);
 
   const {
@@ -47,7 +45,6 @@ export const SoundComponent = observer(() => {
     if (paused) return;
     if (!sermon) return;
     setCurrentTime(currentTime);
-    controlCenter.updatePosition(currentTime);
 
     // start timeout to trigger count api if new sermon has been started
     if (newSermonInitialized) {
@@ -106,7 +103,6 @@ export const SoundComponent = observer(() => {
     if (viewShouldBeUpdated) {
       userSessionStore.setSelectedSermon(playerStore.sermon);
     }
-    controlCenter.setNewSermon(playerStore.sermon);
     updatePaused(false);
     storageStore.addSermonToHistoryList(playerStore.sermon);
   };

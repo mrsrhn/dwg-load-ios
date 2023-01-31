@@ -10,7 +10,6 @@ import {
 import {observer} from 'mobx-react-lite';
 import {SingleSermonListEntry} from '../lists/singleSermonListEntry';
 import {AlbumListEntry} from '../lists/albumListEntry';
-import {useControlCenter} from '../../hooks/useControlCenter';
 import {useNetInfo} from '@react-native-community/netinfo';
 import RNBootSplash from 'react-native-bootsplash';
 import {ListInfo} from '../ListInfo';
@@ -21,6 +20,7 @@ import {Endpoints} from '../../stores/apiStore';
 import {Sermon} from '../../types/userSessionStoreTypes';
 import {ApiSermon} from '../../types/apiStoreTypes';
 import {useStores} from '../../hooks/useStores';
+import TrackPlayer, {Capability} from 'react-native-track-player';
 
 export const wait = (timeout: number) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
@@ -36,7 +36,6 @@ const fetchSermon = async (id): Promise<ApiSermon> => {
 
 export const NewSermonsView = observer(() => {
   const {userSessionStore, apiStore, storageStore, playerStore} = useStores();
-  const controlCenter = useControlCenter();
   const netInfo = useNetInfo();
   const [refreshing, setRefreshing] = React.useState(false);
   const [isInitialized, setIsInitialized] = React.useState(false);
@@ -45,10 +44,6 @@ export const NewSermonsView = observer(() => {
     onEndReachedCalledDuringMomentum,
     setOnEndReachedCalledDuringMomentum,
   ] = React.useState(false);
-
-  React.useEffect(() => {
-    controlCenter.init();
-  }, []);
 
   const initWithSermon = (sermon: Sermon, hasBeenPlayedBefore = false) => {
     apiStore.updateAlbumTitles(sermon.albumId);
@@ -74,7 +69,6 @@ export const NewSermonsView = observer(() => {
     if (hasBeenPlayedBefore) {
       playerStore.updateSermon(sermon, lastPlayedPosition, lastPlayedLocalPath);
     }
-    controlCenter.setNewSermon(sermon);
     userSessionStore.setSelectedSermon(sermon);
   };
 
@@ -96,6 +90,16 @@ export const NewSermonsView = observer(() => {
       }
     }
     async function initialize() {
+      await TrackPlayer.setupPlayer();
+      await TrackPlayer.updateOptions({
+        progressUpdateEventInterval: 1,
+        capabilities: [
+          Capability.Play,
+          Capability.Pause,
+          Capability.JumpBackward,
+          Capability.JumpForward,
+        ],
+      });
       await Promise.all([
         apiStore.updateAllSermonsTotal(),
         apiStore.updateNewSermonsTotal(),

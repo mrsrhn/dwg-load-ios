@@ -38,7 +38,6 @@ export default function App() {
           </Stack.Navigator>
         </NavigationContainer>
         <PlayerView />
-        <SoundComponent />
       </RootStoreProvider>
     </SafeAreaProvider>
   );

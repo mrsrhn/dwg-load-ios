@@ -30,8 +30,14 @@ const PlayingIndicator = () => {
 
 export const MiniPlayer = observer(() => {
   const {userSessionStore, playerStore} = useStores();
-  const {paused, updatePaused, clearPlayer, sermon, currentTime, isVideo} =
-    playerStore;
+  const {
+    paused,
+    updatePaused,
+    clearPlayer,
+    sermon,
+    position: currentTime,
+    isVideo,
+  } = playerStore;
 
   const onPressPlay = () => {
     if (!isVideo) updatePaused(!paused);

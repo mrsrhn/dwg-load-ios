@@ -15,7 +15,6 @@ import {ModalHeader} from '../ModalHeader';
 import {ArtistView} from '../views/ArtistView';
 import {Appearance} from '../../appearance';
 import Video, {LoadError} from 'react-native-video';
-import {useControlCenter} from '../../hooks/useControlCenter';
 import {SermonInfoModal} from './SermonInfoModal';
 import {Artist, Genre, Book} from '../../types/userSessionStoreTypes';
 import Toast from 'react-native-simple-toast';
@@ -34,22 +33,12 @@ export const VideoPlayer: React.FC<PlayerProps> = observer(props => {
   const [paused, setPaused] = useState(true);
   let videoRef = useRef(null);
 
-  const controlCenter = useControlCenter();
   const {playerStore, userSessionStore, storageStore} = useStores();
   const {selectedSermon} = userSessionStore;
   const {setCurrentTime, updateIsBuffering, sermon, updatePaused} = playerStore;
   const [key, setKey] = React.useState(0);
 
   if (!selectedSermon) return null;
-
-  useEffect(() => {
-    controlCenter.reset();
-    return () => {
-      if (playerStore.sermon && playerStore.sermon.id !== selectedSermon.id) {
-        userSessionStore.setSelectedSermon(playerStore.sermon);
-      }
-    };
-  }, []);
 
   useEffect(() => {
     const sermonWithSavedPosition = storageStore.sermonsPositions.find(

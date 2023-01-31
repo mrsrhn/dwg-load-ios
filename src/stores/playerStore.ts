@@ -1,7 +1,13 @@
 import {makeObservable, observable, action, computed} from 'mobx';
 import {RootStore} from './rootStore';
 import {Sermon} from '../types/userSessionStoreTypes';
+import TrackPlayer, {
+  Track,
+  Event,
+  PlaybackProgressUpdatedEvent,
+} from 'react-native-track-player';
 
+// The player is ready to be used
 export class PlayerStore {
   root: RootStore;
   sermon: Sermon | undefined = undefined;
@@ -9,9 +15,7 @@ export class PlayerStore {
   url: string | undefined = undefined;
   paused: boolean = true;
   isBuffering: boolean = false;
-  currentTime: number = 0;
-  shouldSeek: boolean = false;
-  seekValue: number = 0;
+  position: number = 0;
 
   constructor(root: RootStore) {
     this.root = root;
@@ -22,50 +26,133 @@ export class PlayerStore {
       paused: observable,
       initialPosition: observable,
       isBuffering: observable,
-      currentTime: observable,
-      shouldSeek: observable,
-      seekValue: observable,
+      position: observable,
       isVideo: computed,
     });
+
+    TrackPlayer.addEventListener(
+      Event.PlaybackProgressUpdated,
+      this.onProgress,
+    );
+
+    TrackPlayer.addEventListener(Event.PlaybackQueueEnded, this.onEnd);
   }
+
+  private onProgress = (progress: PlaybackProgressUpdatedEvent) => {
+    console.log(
+      'current position:',
+      progress.position,
+      ' of ',
+      this.sermon?.playtime,
+    );
+    if (progress.position === 0) return;
+    this.updatePosition(progress.position);
+  };
+
+  private onEnd = async () => {
+    console.log('end');
+    if (!this.sermon) {
+      throw Error('this.sermon-undefined');
+    }
+
+    this.updatePosition(this.sermon?.playtime);
+    // is no album - break
+    if (!this.sermon?.isPartOfAlbum) {
+      this.updatePaused(true);
+      return;
+    }
+
+    // album titles not defined - break
+    if (!this.root.userSessionStore.selectedSermonAlbumTitles) {
+      this.updatePaused(true);
+      return;
+    }
+
+    // is last title orf album - break
+    if (
+      parseInt(this.sermon.track, 10) ===
+      this.root.userSessionStore.selectedSermonAlbumTitles.length
+    ) {
+      this.updatePaused(true);
+      return;
+    }
+
+    const nextSermon =
+      this.root.userSessionStore.selectedSermonAlbumTitles[
+        parseInt(this.sermon.track, 10)
+      ];
+    // play next title of album
+    const viewShouldBeUpdated =
+      this.root.userSessionStore.selectedSermon?.id === this.sermon.id;
+
+    if (viewShouldBeUpdated) {
+      this.root.userSessionStore.setSelectedSermon(nextSermon);
+    }
+
+    await this.updateSermon(
+      nextSermon,
+      0,
+      this.root.userSessionStore.localPathMp3,
+    );
+
+    this.updatePaused(false);
+    TrackPlayer.play();
+    this.root.storageStore.addSermonToHistoryList(this.sermon);
+  };
 
   clearPlayer = action(() => {
     this.sermon = undefined;
     this.url = undefined;
     this.paused = true;
     this.isBuffering = false;
-    this.currentTime = 0;
-    this.shouldSeek = false;
-    this.seekValue = 0;
+    this.position = 0;
   });
 
-  seek = action((value: number) => {
-    this.shouldSeek = true;
-    this.seekValue = value;
+  seek = action(async (value: number) => {
+    console.log('seekToPosition:', value);
+    await TrackPlayer.seekTo(value);
   });
 
   seekSuccess = action((value: number) => {
-    this.shouldSeek = false;
-    this.currentTime = value;
+    this.position = value;
   });
 
-  updateCurrentTime = action((time: number) => {
-    this.currentTime = time;
+  updatePosition = action((time: number) => {
+    this.position = time;
   });
 
   updateSermon = action(
-    (sermon: Sermon, position: number, alternativePath?: string) => {
+    async (sermon: Sermon, position: number, alternativePath?: string) => {
+      if (!sermon) {
+        console.error('sermon-not-defined');
+        return;
+      }
+
+      const track: Track = {
+        url: alternativePath ? alternativePath : sermon.url,
+        title: sermon.title,
+        artist: sermon.artist?.name,
+        duration: sermon.playtime,
+      };
+
+      await TrackPlayer.add(track);
+      await TrackPlayer.skipToNext();
+      await TrackPlayer.seekTo(position);
+
+      // Save previous played sermon
       if (this.sermon) {
-        this.root.storageStore.addSermonPosition(this.sermon, this.currentTime);
+        this.root.storageStore.addSermonPosition(this.sermon, this.position);
       }
       this.sermon = sermon;
+      this.updatePosition(position);
+
       this.initialPosition = position;
       if (alternativePath) {
         this.updateUrl(alternativePath);
       } else {
         this.updateUrl(sermon.url);
       }
-      this.updateCurrentTime(position);
+      this.updatePosition(position);
     },
   );
 
@@ -74,9 +161,14 @@ export class PlayerStore {
   });
 
   updatePaused = action((paused: boolean) => {
+    if (paused) {
+      TrackPlayer.pause();
+    } else {
+      TrackPlayer.play();
+    }
     this.paused = paused;
     if (paused && this.sermon) {
-      this.root.storageStore.addSermonPosition(this.sermon, this.currentTime);
+      this.root.storageStore.addSermonPosition(this.sermon, this.position);
     }
   });
 
@@ -85,7 +177,7 @@ export class PlayerStore {
   });
 
   setCurrentTime = action((currentTime: number) => {
-    this.currentTime = currentTime;
+    this.position = currentTime;
   });
 
   get isVideo(): boolean | undefined {
