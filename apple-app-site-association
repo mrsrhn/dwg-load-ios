@@ -1,0 +1,25 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "4TPG4XCR2V.dwgradio.de.DWGLoad",
+        "paths": [
+          "/de/play/*"
+        ]
+      },
+      {
+        "appID": "4TPG4XCR2V.dwgradio.de.DWGLoad.RU",
+        "paths": [
+          "/ru/play/*"
+        ]
+      },
+      {
+        "appID": "4TPG4XCR2V.dwgradio.de.DWGLoad.CZ",
+        "paths": [
+          "/cz/play/*"
+        ]
+      }
+    ]
+  }
+}
