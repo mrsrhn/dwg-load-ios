@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {RootStoreProvider} from './providers/rootStoreProvider';
-import {SoundComponent} from './components/sound';
 import {SearchView} from './components/views/SearchView';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {TabsNavigatior} from './navigators/tabsNavigator';

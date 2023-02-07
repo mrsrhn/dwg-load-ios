@@ -21,6 +21,7 @@ import {Sermon} from '../../types/userSessionStoreTypes';
 import {ApiSermon} from '../../types/apiStoreTypes';
 import {useStores} from '../../hooks/useStores';
 import TrackPlayer, {Capability} from 'react-native-track-player';
+import {trackPlayerOptions} from '../../config/trackPlayerOptions';
 
 export const wait = (timeout: number) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
@@ -91,15 +92,7 @@ export const NewSermonsView = observer(() => {
     }
     async function initialize() {
       await TrackPlayer.setupPlayer();
-      await TrackPlayer.updateOptions({
-        progressUpdateEventInterval: 1,
-        capabilities: [
-          Capability.Play,
-          Capability.Pause,
-          Capability.JumpBackward,
-          Capability.JumpForward,
-        ],
-      });
+      await TrackPlayer.updateOptions(trackPlayerOptions);
       await Promise.all([
         apiStore.updateAllSermonsTotal(),
         apiStore.updateNewSermonsTotal(),

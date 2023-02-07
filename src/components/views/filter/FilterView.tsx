@@ -270,6 +270,7 @@ const Filter: React.FC<FilterProps> = observer(props => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 60,
     paddingLeft: 20,
     paddingRight: 20,
   },

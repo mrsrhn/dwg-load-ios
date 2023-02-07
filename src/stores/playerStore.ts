@@ -30,12 +30,7 @@ export class PlayerStore {
       isVideo: computed,
     });
 
-    TrackPlayer.addEventListener(
-      Event.PlaybackProgressUpdated,
-      this.onProgress,
-    );
-
-    TrackPlayer.addEventListener(Event.PlaybackQueueEnded, this.onEnd);
+    this.registerEvents();
   }
 
   private onProgress = (progress: PlaybackProgressUpdatedEvent) => {
@@ -109,8 +104,9 @@ export class PlayerStore {
   });
 
   seek = action(async (value: number) => {
+    TrackPlayer.seekTo(value);
+    this.updatePosition(value);
     console.log('seekToPosition:', value);
-    await TrackPlayer.seekTo(value);
   });
 
   seekSuccess = action((value: number) => {
@@ -179,6 +175,27 @@ export class PlayerStore {
   setCurrentTime = action((currentTime: number) => {
     this.position = currentTime;
   });
+
+  private registerEvents = () => {
+    TrackPlayer.addEventListener(
+      Event.PlaybackProgressUpdated,
+      this.onProgress,
+    );
+    TrackPlayer.addEventListener(Event.PlaybackQueueEnded, this.onEnd);
+    TrackPlayer.addEventListener(Event.RemotePlay, () =>
+      this.updatePaused(false),
+    );
+    TrackPlayer.addEventListener(Event.RemotePause, () =>
+      this.updatePaused(true),
+    );
+    TrackPlayer.addEventListener(Event.RemoteJumpForward, () =>
+      this.seek(this.position + 10),
+    );
+    TrackPlayer.addEventListener(Event.RemoteJumpBackward, () =>
+      this.seek(this.position - 10),
+    );
+    TrackPlayer.addEventListener(Event.RemoteSeek, e => this.seek(e.position));
+  };
 
   get isVideo(): boolean | undefined {
     return this.url?.substr(this.url.length - 3, 3) === 'mp4';
