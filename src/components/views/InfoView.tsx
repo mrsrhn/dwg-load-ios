@@ -80,11 +80,7 @@ export const InfoView = observer(() => {
                 width: '100%',
                 alignItems: 'center',
               }}
-              onPress={() =>
-                Linking.openURL(
-                  'https://www.paypal.com/donate/?hosted_button_id=SVB67LZ9JGAME',
-                )
-              }>
+              onPress={() => Linking.openURL(strings.paypalUrl)}>
               <Image
                 style={styles.paypalLogo}
                 resizeMode="contain"
