@@ -20,7 +20,7 @@ import {Endpoints} from '../../stores/apiStore';
 import {Sermon} from '../../types/userSessionStoreTypes';
 import {ApiSermon} from '../../types/apiStoreTypes';
 import {useStores} from '../../hooks/useStores';
-import TrackPlayer, {Capability} from 'react-native-track-player';
+import TrackPlayer from 'react-native-track-player';
 import {trackPlayerOptions} from '../../config/trackPlayerOptions';
 
 export const wait = (timeout: number) => {
