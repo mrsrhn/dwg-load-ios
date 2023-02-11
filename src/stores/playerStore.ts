@@ -98,7 +98,7 @@ export class PlayerStore {
   clearPlayer = action(() => {
     this.sermon = undefined;
     this.url = undefined;
-    this.paused = true;
+    this.updatePaused(true);
     this.isBuffering = false;
     this.position = 0;
   });

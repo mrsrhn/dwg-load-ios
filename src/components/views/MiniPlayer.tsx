@@ -9,9 +9,19 @@ import {useStores} from '../../hooks/useStores';
 
 const PlayingIndicator = () => {
   const {playerStore} = useStores();
+
+  const ref = React.createRef<LottieView>();
+
+  React.useEffect(() => {
+    if (ref) {
+      ref.current?.play();
+    }
+  });
+
   return (
     !playerStore.isVideo && (
       <LottieView
+        ref={ref}
         colorFilters={[
           {keypath: 'Calque 5 Silhouettes', color: Appearance.lightColor},
           {keypath: 'Calque 4 Silhouettes', color: Appearance.lightColor},
