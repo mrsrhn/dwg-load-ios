@@ -3,10 +3,12 @@ import {observer} from 'mobx-react-lite';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import {StyleSheet, Text, View} from 'react-native';
 import {Appearance} from '../../appearance';
+import {useStores} from '../../hooks/useStores';
+import {useProgress} from 'react-native-track-player';
 export interface SliderProps {
-  disabled: boolean;
+  enabled: boolean;
   duration: number;
-  currentTime: number;
+  initialProgress: number | undefined;
   seekTo: Function;
 }
 
@@ -30,18 +32,24 @@ const CustomLabel = (props: any) => (
     {props.content}
   </Text>
 );
+
 export const ProgressSlider = observer((props: SliderProps) => {
   const {duration} = props;
+  const {playerStore} = useStores();
+
+  const progress = useProgress();
+
+  const currentPosition = props.enabled
+    ? progress.position
+    : props.initialProgress ?? 0;
   return (
     <View style={styles.container}>
       <MultiSlider
         selectedStyle={{backgroundColor: Appearance.baseColor}}
         min={0}
-        values={[props.currentTime]}
+        values={[props.initialProgress ?? progress.position]}
         max={props.duration}
-        onValuesChangeFinish={values => {
-          props.seekTo(values[0]);
-        }}
+        onValuesChangeFinish={values => props.seekTo(values[0])}
         enableLabel
         customLabel={p => {
           return typeof p.oneMarkerValue === 'number' ? (
@@ -55,10 +63,10 @@ export const ProgressSlider = observer((props: SliderProps) => {
       />
       <View style={styles.indicators}>
         <Text style={styles.indicatorText}>
-          {formatDurationString(props.currentTime)}
+          {formatDurationString(currentPosition)}
         </Text>
         <Text style={styles.indicatorText}>
-          {formatDurationString(props.duration - props.currentTime, true)}
+          {formatDurationString(props.duration - currentPosition, true)}
         </Text>
       </View>
     </View>

@@ -104,13 +104,8 @@ export class PlayerStore {
   });
 
   seek = action(async (value: number) => {
-    TrackPlayer.seekTo(value);
-    this.updatePosition(value);
+    await TrackPlayer.seekTo(value);
     console.log('seekToPosition:', value);
-  });
-
-  seekSuccess = action((value: number) => {
-    this.position = value;
   });
 
   updatePosition = action((time: number) => {

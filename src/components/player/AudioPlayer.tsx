@@ -177,8 +177,8 @@ export const Player: React.FC<PlayerProps> = observer(props => {
           deactivateSleepTimer={false}
         />
         <ProgressSlider
-          disabled={!isCurrentlyPlaying}
-          currentTime={isCurrentlyPlaying ? currentTime : initialPosition}
+          enabled={isCurrentlyPlaying}
+          initialProgress={isCurrentlyPlaying ? undefined : initialPosition}
           duration={selectedSermon.playtime}
           seekTo={isCurrentlyPlaying ? seek : setInitialPosition}
         />
