@@ -9,12 +9,12 @@ import {Artist, Genre, Book} from '../../types/userSessionStoreTypes';
 import {useStores} from '../../hooks/useStores';
 
 export const PlayerView = observer(() => {
-  const {userSessionStore, apiStore} = useStores();
+  const {userSessionStore, apiStore, filterStore} = useStores();
   const [scrollViewIsOnTop, activateCloseGesture] = React.useState(true);
 
   const showGenreTitles = async (genre: Genre) => {
-    userSessionStore.resetFilter();
-    userSessionStore.updateFilteredGenre(genre);
+    filterStore.resetFilter();
+    filterStore.updateFilteredGenre(genre);
     userSessionStore.setPlayerModalVisible(false);
     RootNavigation.goBack();
     RootNavigation.navigate('TabAllSermons', {});
@@ -23,8 +23,8 @@ export const PlayerView = observer(() => {
   };
 
   const showArtistTitles = async (artist: Artist) => {
-    userSessionStore.resetFilter();
-    userSessionStore.updateFilteredArtist(artist);
+    filterStore.resetFilter();
+    filterStore.updateFilteredArtist(artist);
     userSessionStore.setPlayerModalVisible(false);
     RootNavigation.goBack();
     RootNavigation.navigate('TabAllSermons', {});
@@ -33,8 +33,8 @@ export const PlayerView = observer(() => {
   };
 
   const showBookTitles = async (book: Book) => {
-    userSessionStore.resetFilter();
-    userSessionStore.updateFilteredBook(book);
+    filterStore.resetFilter();
+    filterStore.updateFilteredBook(book);
     userSessionStore.setPlayerModalVisible(false);
     RootNavigation.goBack();
     RootNavigation.navigate('TabAllSermons', {});
