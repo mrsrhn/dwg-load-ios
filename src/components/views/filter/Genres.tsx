@@ -5,8 +5,8 @@ import {observer} from 'mobx-react-lite';
 import {useStores} from '../../../hooks/useStores';
 
 export const Genres = observer(() => {
-  const {userSessionStore} = useStores();
-  const selectedGenre = userSessionStore.filteredGenre;
+  const {userSessionStore, filterStore} = useStores();
+  const selectedGenre = filterStore.filteredGenre;
   return (
     <FlatList
       data={userSessionStore.genres}
@@ -27,9 +27,9 @@ export const Genres = observer(() => {
               onPress={() => {
                 const isChecked = selectedGenre?.id === item.id;
                 if (isChecked) {
-                  userSessionStore.updateFilteredGenre(undefined);
+                  filterStore.updateFilteredGenre(undefined);
                 } else {
-                  userSessionStore.updateFilteredGenre(item);
+                  filterStore.updateFilteredGenre(item);
                 }
               }}
             />

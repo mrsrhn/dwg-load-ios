@@ -10,6 +10,7 @@ import {
   Book,
   Chapter,
   SortOption,
+  NoFilter,
 } from '../types/userSessionStoreTypes';
 import {strings} from '../strings';
 
@@ -18,14 +19,7 @@ export class UserSessionStore {
   selectedSermon: Sermon | undefined = undefined;
   localSermons: LocalSermonsFileEntry[] = [];
 
-  // Filter states
-  filteredArtist?: Artist = undefined;
-  filteredGenre?: Genre = undefined;
-  filteredBook?: Book = undefined;
-  filteredChapter?: Chapter = undefined;
   sortParameter: SortOption = 'title';
-
-  filterModalVisible: boolean = false;
 
   playerModalVisible = false;
   artistModalVisible = false;
@@ -43,20 +37,15 @@ export class UserSessionStore {
       newSermons: computed,
       collections: computed,
       artists: computed,
-      filteredArtist: observable,
       genres: computed,
-      filteredGenre: observable,
       books: computed,
-      filteredBook: observable,
       chapters: computed,
-      filteredChapter: observable,
       allSermons: computed,
       searchedSermons: computed,
       downloadedSermons: computed,
       currentAlbumTitles: computed,
       currentCollectionTitles: computed,
       selectedSermon: observable,
-      filterModalVisible: observable,
       playerModalVisible: observable,
       artistModalVisible: observable,
       commentModalVisible: observable,
@@ -139,46 +128,58 @@ export class UserSessionStore {
     return this.root.apiStore.collections;
   }
 
-  get artists(): Artist[] {
-    return this.root.apiStore.artists.map(artist => ({
-      id: artist.id,
-      name: artist.name,
-      numTitles: Number(artist.num_titles),
-      description: artist.description,
-      image: artist.image,
-      createdAt: artist.created_at,
-      updatedAt: artist.updated_at,
-    }));
+  get artists(): (NoFilter | Artist)[] {
+    return [
+      {id: 'none', name: strings.notFiltered, numTitles: 0},
+      ...this.root.apiStore.artists.map(artist => ({
+        id: artist.id,
+        name: artist.name,
+        numTitles: Number(artist.num_titles),
+        description: artist.description,
+        image: artist.image,
+        createdAt: artist.created_at,
+        updatedAt: artist.updated_at,
+      })),
+    ];
   }
 
-  get genres(): Genre[] {
-    return this.root.apiStore.genres.map(genre => ({
-      id: genre.id,
-      name: genre.name,
-      numTitles: Number(genre.num_titles),
-      createdAt: genre.created_at,
-      updatedAt: genre.updated_at,
-    }));
+  get genres(): (NoFilter | Genre)[] {
+    return [
+      {id: 'none', name: strings.notFiltered, numTitles: 0},
+      ...this.root.apiStore.genres.map(genre => ({
+        id: genre.id,
+        name: genre.name,
+        numTitles: Number(genre.num_titles),
+        createdAt: genre.created_at,
+        updatedAt: genre.updated_at,
+      })),
+    ];
   }
 
-  get books(): Book[] {
-    return this.root.apiStore.books.map(book => ({
-      id: book.id,
-      name: book.long,
-      short: book.short,
-      long: book.long,
-      numTitles: book.num_titles,
-    }));
+  get books(): (NoFilter | Book)[] {
+    return [
+      {id: 'none', name: strings.notFiltered, numTitles: 0},
+      ...this.root.apiStore.books.map(book => ({
+        id: book.id,
+        name: book.long,
+        short: book.short,
+        long: book.long,
+        numTitles: book.num_titles,
+      })),
+    ];
   }
 
-  get chapters(): Chapter[] {
-    return this.root.apiStore.chapters.map(chapter => ({
-      chapter: chapter.chapter,
-      name: chapter.chapter,
-      id: chapter.id,
-      numTitles: chapter.num_titles,
-      count: chapter.count,
-    }));
+  get chapters(): (NoFilter | Chapter)[] {
+    return [
+      {id: 'none', name: strings.notFiltered, numTitles: 0},
+      ...this.root.apiStore.chapters.map(chapter => ({
+        chapter: chapter.chapter,
+        name: chapter.chapter,
+        id: chapter.id,
+        numTitles: chapter.num_titles,
+        count: chapter.count,
+      })),
+    ];
   }
 
   get allSermons(): Sermon[] {
@@ -221,10 +222,6 @@ export class UserSessionStore {
       ? `${this.root.storageStore.localPathBase}/${this.selectedSermon.id}.mp3`
       : undefined;
   }
-
-  setFilterViewVisible = action((visible: boolean) => {
-    this.filterModalVisible = visible;
-  });
 
   mapTitles = (apiTitles: ApiSermon[]): Sermon[] => {
     return apiTitles.map(sermon => ({
@@ -306,30 +303,7 @@ export class UserSessionStore {
     }));
   };
 
-  updateFilteredArtist = action((artist: Artist | undefined) => {
-    this.filteredArtist = artist;
-  });
-
-  updateFilteredGenre = action((genre: Genre | undefined) => {
-    this.filteredGenre = genre;
-  });
-
-  updateFilteredBook = action((book: Book | undefined) => {
-    this.filteredBook = book;
-  });
-
-  updateFilteredChapter = action((chapter: Chapter | undefined) => {
-    this.filteredChapter = chapter;
-  });
-
   updateSortParameter = action((sortBy: SortOption) => {
     this.sortParameter = sortBy;
-  });
-
-  resetFilter = action(() => {
-    this.filteredGenre = undefined;
-    this.filteredArtist = undefined;
-    this.filteredBook = undefined;
-    this.filteredChapter = undefined;
   });
 }

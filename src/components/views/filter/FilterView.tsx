@@ -1,11 +1,5 @@
 import * as React from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  ActivityIndicator,
-  Platform,
-} from 'react-native';
+import {StyleSheet, View, Text, ActivityIndicator} from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {Appearance} from '../../../appearance';
 import {DWGFilterButton} from '../../DWGFilterButton';
@@ -15,6 +9,7 @@ import {
   Book,
   Genre,
   Chapter,
+  NoFilter,
 } from '../../../types/userSessionStoreTypes';
 import {Picker} from '@react-native-picker/picker';
 import {DWGButton} from '../../DWGButton';
@@ -27,80 +22,60 @@ interface FilterViewProps {
   setGestureRecognizerActive: (active: boolean) => void;
 }
 export const FilterView: React.FC<FilterViewProps> = observer(props => {
-  const {userSessionStore} = useStores();
+  const {userSessionStore, filterStore} = useStores();
   const {apiStore} = useStores();
 
   // Lokal filterstates
   const [selectedArtist, setSelectedArtist] = React.useState<
     Artist | undefined
-  >(userSessionStore.filteredArtist);
+  >(filterStore.filteredArtist);
   const [selectedGenre, setSelectedGenre] = React.useState<Genre | undefined>(
-    userSessionStore.filteredGenre,
+    filterStore.filteredGenre,
   );
   const [selectedBook, setSelectedBook] = React.useState<Book | undefined>(
-    userSessionStore.filteredBook,
+    filterStore.filteredBook,
   );
   const [selectedChapter, setSelectedChapter] = React.useState<
     Chapter | undefined
-  >(userSessionStore.filteredChapter);
+  >(filterStore.filteredChapter);
 
-  const close = () => userSessionStore.setFilterViewVisible(false);
+  const close = () => filterStore.setFilterViewVisible(false);
 
   React.useEffect(() => {
     apiStore.updateFilterData(selectedArtist, selectedGenre, selectedBook);
   }, [selectedArtist, selectedGenre, selectedBook, apiStore]);
 
   const reset = async () => {
-    userSessionStore.updateFilteredArtist(undefined);
-    userSessionStore.updateFilteredGenre(undefined);
-    userSessionStore.updateFilteredBook(undefined);
-    userSessionStore.updateFilteredChapter(undefined);
+    filterStore.updateFilteredArtist(undefined);
+    filterStore.updateFilteredGenre(undefined);
+    filterStore.updateFilteredBook(undefined);
+    filterStore.updateFilteredChapter(undefined);
     await apiStore.resetAllSermons();
     apiStore.updateAllSermons();
     close();
   };
 
   const apply = async () => {
-    userSessionStore.updateFilteredArtist(selectedArtist);
-    userSessionStore.updateFilteredGenre(selectedGenre);
-    userSessionStore.updateFilteredBook(selectedBook);
-    userSessionStore.updateFilteredChapter(selectedChapter);
+    filterStore.updateFilteredArtist(selectedArtist);
+    filterStore.updateFilteredGenre(selectedGenre);
+    filterStore.updateFilteredBook(selectedBook);
+    filterStore.updateFilteredChapter(selectedChapter);
     await apiStore.resetAllSermons();
     apiStore.updateAllSermons();
     close();
   };
 
-  const artistList = [
-    {id: 'none', name: strings.notFiltered, numTitles: 0},
-    ...userSessionStore.artists,
-  ];
-  const genreList = [
-    {id: 'none', name: strings.notFiltered, numTitles: 0},
-    ...userSessionStore.genres,
-  ];
-  const booksList = [
-    {id: 'none', name: strings.notFiltered, numTitles: 0},
-    ...userSessionStore.books,
-  ];
-  const chapterList = [
-    {id: 'none', name: strings.notFiltered, numTitles: 0},
-    ...userSessionStore.chapters,
-  ];
-
   return (
     <SafeAreaView style={styles.container}>
-      <ModalHeader
-        onClose={() => userSessionStore.setFilterViewVisible(false)}
-      />
+      <ModalHeader onClose={() => filterStore.setFilterViewVisible(false)} />
       <View style={{flexDirection: 'row'}}>
         <Text style={styles.title}>{strings.filter}</Text>
         {apiStore.isLoadingFilterData && <ActivityIndicator />}
       </View>
-
       <View>
         <Filter
           title={strings.speaker}
-          items={artistList}
+          items={userSessionStore.artists}
           selectedItem={selectedArtist?.id ?? 'none'}
           onChange={value => {
             setSelectedArtist(
@@ -111,7 +86,7 @@ export const FilterView: React.FC<FilterViewProps> = observer(props => {
         />
         <Filter
           title={strings.category}
-          items={genreList}
+          items={userSessionStore.genres}
           selectedItem={selectedGenre?.id ?? 'none'}
           onChange={value =>
             setSelectedGenre(value.id === 'none' ? undefined : (value as Genre))
@@ -120,7 +95,7 @@ export const FilterView: React.FC<FilterViewProps> = observer(props => {
         />
         <Filter
           title={strings.bible}
-          items={booksList}
+          items={userSessionStore.books}
           selectedItem={selectedBook?.id ?? 'none'}
           onChange={value => {
             setSelectedBook(value.id === 'none' ? undefined : (value as Book));
@@ -129,7 +104,7 @@ export const FilterView: React.FC<FilterViewProps> = observer(props => {
         />
         <Filter
           title={strings.chapter}
-          items={chapterList}
+          items={userSessionStore.chapters}
           selectedItem={selectedChapter?.id ?? 'none'}
           onChange={value =>
             setSelectedChapter(
@@ -159,28 +134,19 @@ export const FilterView: React.FC<FilterViewProps> = observer(props => {
   );
 });
 
-type Item =
-  | Artist
-  | Book
-  | Genre
-  | Chapter
-  | {
-      id: string;
-      name: string;
-      numTitles: number;
-    };
-
-interface FilterProps {
-  items: Item[];
+interface FilterProps<Items> {
+  items: Items;
   title: string;
   selectedItem: string;
   disabled?: boolean;
   pickerPrefix?: string;
-  onChange: (item: Item) => void;
+  onChange: (item: Items) => void;
   setGestureRecognizerActive: (active: boolean) => void;
 }
 
-const Filter: React.FC<FilterProps> = observer(props => {
+const Filter: React.FC<
+  FilterProps<(Artist | Book | Genre | Chapter | NoFilter)[]>
+> = observer(props => {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [selectedPickerValue, setSelectedPickerValue] = React.useState(
     props.selectedItem,
@@ -196,12 +162,6 @@ const Filter: React.FC<FilterProps> = observer(props => {
       props.setGestureRecognizerActive(true);
     }
   }, [modalVisible]);
-
-  React.useEffect(() => {
-    if (Platform.OS === 'android') {
-      apply();
-    }
-  }, [selectedPickerValue]);
 
   React.useEffect(() => {
     // Reset selected value if filter gets disabled

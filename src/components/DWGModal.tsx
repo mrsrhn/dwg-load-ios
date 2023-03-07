@@ -17,6 +17,7 @@ interface DWGModalProps {
   onClose: () => void;
   visible: boolean;
   title?: string;
+  children: React.ReactElement[];
 }
 export const DWGModal: React.FC<DWGModalProps> = observer(props => {
   const {onClose, children, visible, title} = props;

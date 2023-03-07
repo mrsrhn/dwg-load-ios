@@ -19,14 +19,14 @@ const Stack = createNativeStackNavigator();
 export const SermonsNavigator = observer((props: SermonsNavigatorProps) => {
   const {baseComponentName, baseComponent} = props;
 
-  const {userSessionStore} = useStores();
+  const {userSessionStore, filterStore} = useStores();
 
   const {openSortActions, selectedOption} = useSortActions();
 
   const isFiltered =
-    userSessionStore.filteredArtist ||
-    userSessionStore.filteredGenre ||
-    userSessionStore.filteredBook;
+    filterStore.filteredArtist ||
+    filterStore.filteredGenre ||
+    filterStore.filteredBook;
 
   const defaultViewOptions = (navigation: any) => ({
     headerRight: () =>
@@ -65,7 +65,7 @@ export const SermonsNavigator = observer((props: SermonsNavigatorProps) => {
             <Pressable
               style={{paddingLeft: 15}}
               key="filter-button"
-              onPress={() => userSessionStore.setFilterViewVisible(true)}>
+              onPress={() => filterStore.setFilterViewVisible(true)}>
               {({pressed}) => (
                 <Ionicons
                   name={

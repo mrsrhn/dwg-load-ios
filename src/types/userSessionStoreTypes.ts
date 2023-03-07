@@ -38,6 +38,12 @@ export interface Sermon {
   isVideo: boolean;
 }
 
+export interface NoFilter {
+  id: 'none';
+  name: string;
+  numTitles: 0;
+}
+
 export interface Passage {
   id: string;
   passageBookId: string;

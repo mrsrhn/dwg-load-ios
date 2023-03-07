@@ -22,7 +22,7 @@ import {ListInfo} from '../ListInfo';
 import {useStores} from '../../hooks/useStores';
 
 export const AllSermonsView = observer(() => {
-  const {userSessionStore, apiStore} = useStores();
+  const {userSessionStore, apiStore, filterStore} = useStores();
   const [refreshing, setRefreshing] = React.useState(false);
   const netInfo = useNetInfo();
 
@@ -30,10 +30,10 @@ export const AllSermonsView = observer(() => {
     React.useState(true);
 
   const activeFilters = [
-    userSessionStore.filteredArtist,
-    userSessionStore.filteredGenre,
-    userSessionStore.filteredBook,
-    userSessionStore.filteredChapter,
+    filterStore.filteredArtist,
+    filterStore.filteredGenre,
+    filterStore.filteredBook,
+    filterStore.filteredChapter,
   ].filter(f => f !== undefined);
   const numberOfActiveFilters = activeFilters.filter(
     filter => filter !== undefined,
@@ -111,10 +111,10 @@ export const AllSermonsView = observer(() => {
         <GestureRecognizer
           onSwipeDown={() => {
             if (!gestureRecognizerActive) return;
-            userSessionStore.setFilterViewVisible(false);
+            filterStore.setFilterViewVisible(false);
           }}>
           <Modal
-            visible={userSessionStore.filterModalVisible}
+            visible={filterStore.filterModalVisible}
             animationType="slide"
             presentationStyle="fullScreen">
             <FilterView

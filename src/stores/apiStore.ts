@@ -199,32 +199,32 @@ export class ApiStore {
   updateAllSermonsSearchUrl = action(() => {
     let parameterString = '';
     if (
-      !this.root.userSessionStore.filteredArtist &&
-      !this.root.userSessionStore.filteredGenre &&
-      !this.root.userSessionStore.filteredBook
+      !this.root.filterStore.filteredArtist &&
+      !this.root.filterStore.filteredGenre &&
+      !this.root.filterStore.filteredBook
     ) {
       this.allSermonsSearchUrl = `${this.baseURL}${Endpoints.all}?s=${this.root.userSessionStore.sortParameter}&`;
       return;
     }
-    if (this.root.userSessionStore.filteredArtist) {
+    if (this.root.filterStore.filteredArtist) {
       parameterString =
         parameterString +
-        `${Parameter.paramArtist}=${this.root.userSessionStore.filteredArtist.id}&`;
+        `${Parameter.paramArtist}=${this.root.filterStore.filteredArtist.id}&`;
     }
-    if (this.root.userSessionStore.filteredBook) {
+    if (this.root.filterStore.filteredBook) {
       parameterString =
         parameterString +
-        `${Parameter.paramBook}=${this.root.userSessionStore.filteredBook.id}&`;
+        `${Parameter.paramBook}=${this.root.filterStore.filteredBook.id}&`;
     }
-    if (this.root.userSessionStore.filteredGenre) {
+    if (this.root.filterStore.filteredGenre) {
       parameterString =
         parameterString +
-        `${Parameter.paramGenre}=${this.root.userSessionStore.filteredGenre.id}&`;
+        `${Parameter.paramGenre}=${this.root.filterStore.filteredGenre.id}&`;
     }
-    if (this.root.userSessionStore.filteredChapter) {
+    if (this.root.filterStore.filteredChapter) {
       parameterString =
         parameterString +
-        `${Parameter.paramChapter}=${this.root.userSessionStore.filteredChapter.id}&`;
+        `${Parameter.paramChapter}=${this.root.filterStore.filteredChapter.id}&`;
     }
     this.allSermonsSearchUrl = `${this.baseURL}${Endpoints.title}?${parameterString}s=${this.root.userSessionStore.sortParameter}&`;
   });

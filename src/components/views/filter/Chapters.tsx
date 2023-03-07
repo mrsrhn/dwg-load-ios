@@ -5,8 +5,8 @@ import {observer} from 'mobx-react-lite';
 import {useStores} from '../../../hooks/useStores';
 
 export const Chapters = observer(() => {
-  const {userSessionStore} = useStores();
-  const selectedChapter = userSessionStore.filteredChapter;
+  const {userSessionStore, filterStore} = useStores();
+  const selectedChapter = filterStore.filteredChapter;
   return (
     <FlatList
       data={userSessionStore.chapters}
@@ -27,9 +27,9 @@ export const Chapters = observer(() => {
               onPress={() => {
                 const isChecked = selectedChapter?.id === item.id;
                 if (isChecked) {
-                  userSessionStore.updateFilteredChapter(undefined);
+                  filterStore.updateFilteredChapter(undefined);
                 } else {
-                  userSessionStore.updateFilteredChapter(item);
+                  filterStore.updateFilteredChapter(item);
                 }
               }}
             />
