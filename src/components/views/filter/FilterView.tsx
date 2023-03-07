@@ -66,7 +66,7 @@ export const FilterView: React.FC<FilterViewProps> = observer(props => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ModalHeader onClose={() => filterStore.setFilterViewVisible(false)} />
       <View style={{flexDirection: 'row'}}>
         <Text style={styles.title}>{strings.filter}</Text>
@@ -130,7 +130,7 @@ export const FilterView: React.FC<FilterViewProps> = observer(props => {
           onPress={apply}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 });
 
@@ -229,10 +229,11 @@ const Filter: React.FC<
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingTop: 60,
-    paddingLeft: 20,
-    paddingRight: 20,
+    height: '50%',
+    marginTop: 'auto',
+    backgroundColor: 'white',
+    borderTopColor: Appearance.baseColor,
+    borderTopWidth: 1,
   },
   title: {
     textAlign: 'center',

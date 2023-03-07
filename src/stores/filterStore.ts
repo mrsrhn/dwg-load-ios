@@ -11,7 +11,7 @@ import {RootStore} from './rootStore';
 export class FilterStore {
   root: RootStore;
   // Filter states
-  filterModalVisible: boolean | NoFilter = false;
+  filterModalVisible: boolean = false;
   filteredArtist?: Artist | NoFilter = undefined;
   filteredGenre?: Genre | NoFilter = undefined;
   filteredBook?: Book | NoFilter = undefined;

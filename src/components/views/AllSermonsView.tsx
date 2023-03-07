@@ -116,7 +116,10 @@ export const AllSermonsView = observer(() => {
           <Modal
             visible={filterStore.filterModalVisible}
             animationType="slide"
-            presentationStyle="fullScreen">
+            transparent={true}
+
+            // presentationStyle="fullScreen"
+          >
             <FilterView
               setGestureRecognizerActive={setGestureRecognizerActive}
             />
