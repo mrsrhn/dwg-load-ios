@@ -13,7 +13,7 @@ import {SingleSermonListEntry} from '../lists/singleSermonListEntry';
 import {AlbumListEntry} from '../lists/albumListEntry';
 import {FilterView} from './filter/FilterView';
 import {Appearance} from '../../appearance';
-import GestureRecognizer from 'react-native-swipe-gestures';
+
 import {wait} from './NewSermonsView';
 import Toast from 'react-native-simple-toast';
 import {strings} from '../../strings';
@@ -25,9 +25,6 @@ export const AllSermonsView = observer(() => {
   const {userSessionStore, apiStore, filterStore} = useStores();
   const [refreshing, setRefreshing] = React.useState(false);
   const netInfo = useNetInfo();
-
-  const [gestureRecognizerActive, setGestureRecognizerActive] =
-    React.useState(true);
 
   const activeFilters = [
     filterStore.filteredArtist,
@@ -108,23 +105,13 @@ export const AllSermonsView = observer(() => {
             }
           }}
         />
-        <GestureRecognizer
-          onSwipeDown={() => {
-            if (!gestureRecognizerActive) return;
-            filterStore.setFilterViewVisible(false);
-          }}>
-          <Modal
-            visible={filterStore.filterModalVisible}
-            animationType="slide"
-            transparent={true}
 
-            // presentationStyle="fullScreen"
-          >
-            <FilterView
-              setGestureRecognizerActive={setGestureRecognizerActive}
-            />
-          </Modal>
-        </GestureRecognizer>
+        <Modal
+          visible={filterStore.filterModalVisible}
+          animationType="slide"
+          transparent={true}>
+          <FilterView />
+        </Modal>
       </View>
     </SafeAreaView>
   );

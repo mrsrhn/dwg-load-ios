@@ -1,4 +1,10 @@
-import {Pressable, View, StyleSheet, Text} from 'react-native';
+import {
+  Pressable,
+  View,
+  StyleSheet,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
 import React from 'react';
 import {Appearance} from '../appearance';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -12,6 +18,8 @@ interface DWGButtonProps {
   selected?: boolean;
   disabled?: boolean;
   icon?: string;
+  isLoading?: boolean;
+  loadableText?: string;
 }
 
 export const DWGButton: React.FC<DWGButtonProps> = props => {
@@ -65,6 +73,15 @@ export const DWGButton: React.FC<DWGButtonProps> = props => {
                     : [styles.buttonText, styles[props.style]]
                 }>
                 {props.title}
+                {
+                  <Text>
+                    {props.isLoading ? (
+                      <ActivityIndicator />
+                    ) : props.loadableText ? (
+                      <Text>{props.loadableText}</Text>
+                    ) : null}
+                  </Text>
+                }
               </Text>
               {props.subtitle ? (
                 <Text
@@ -109,7 +126,6 @@ const styles = StyleSheet.create({
     borderColor: Appearance.baseColor,
     color: Appearance.baseColor,
     borderWidth: 2,
-    flexGrow: 1,
   },
   primary: {backgroundColor: Appearance.baseColor, color: 'white'},
   iconContainer: {

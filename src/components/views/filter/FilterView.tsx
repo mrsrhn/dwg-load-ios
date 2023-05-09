@@ -1,9 +1,7 @@
 import * as React from 'react';
-import {StyleSheet, View, Text, ActivityIndicator} from 'react-native';
+import {StyleSheet, View, Text, FlatList, SafeAreaView} from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {Appearance} from '../../../appearance';
-import {DWGFilterButton} from '../../DWGFilterButton';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   Artist,
   Book,
@@ -11,217 +9,196 @@ import {
   Chapter,
   NoFilter,
 } from '../../../types/userSessionStoreTypes';
-import {Picker} from '@react-native-picker/picker';
 import {DWGButton} from '../../DWGButton';
 import {ModalHeader} from '../../ModalHeader';
-import {DWGModal} from '../../DWGModal';
 import {strings} from '../../../strings';
 import {useStores} from '../../../hooks/useStores';
+import {createStackNavigator} from '@react-navigation/stack';
 
-interface FilterViewProps {
-  setGestureRecognizerActive: (active: boolean) => void;
-}
-export const FilterView: React.FC<FilterViewProps> = observer(props => {
-  const {userSessionStore, filterStore} = useStores();
+import {
+  TouchableHighlight,
+  TouchableWithoutFeedback,
+} from 'react-native-gesture-handler';
+import {useNavigation} from '@react-navigation/native';
+
+const Stack = createStackNavigator();
+interface FilterViewProps {}
+export const FilterView: React.FC<FilterViewProps> = observer(() => {
+  const {filterStore} = useStores();
   const {apiStore} = useStores();
 
-  // Lokal filterstates
-  const [selectedArtist, setSelectedArtist] = React.useState<
-    Artist | undefined
-  >(filterStore.filteredArtist);
-  const [selectedGenre, setSelectedGenre] = React.useState<Genre | undefined>(
-    filterStore.filteredGenre,
-  );
-  const [selectedBook, setSelectedBook] = React.useState<Book | undefined>(
-    filterStore.filteredBook,
-  );
-  const [selectedChapter, setSelectedChapter] = React.useState<
-    Chapter | undefined
-  >(filterStore.filteredChapter);
+  const close = () => {
+    filterStore.filterViewUpdateFilteredArtist(undefined);
+    filterStore.filterViewUpdateFilteredGenre(undefined);
+    filterStore.filterViewUpdateFilteredBook(undefined);
+    filterStore.filterViewUpdateFilteredChapter(undefined);
 
-  const close = () => filterStore.setFilterViewVisible(false);
+    filterStore.setFilterViewVisible(false);
+    apply();
+  };
+
+  const apply = React.useCallback(async () => {
+    filterStore.updateFilteredArtist();
+    filterStore.updateFilteredGenre();
+    filterStore.updateFilteredBook();
+    filterStore.updateFilteredChapter();
+    await apiStore.resetAllSermons();
+    apiStore.updateAllSermons();
+  }, [apiStore, filterStore]);
 
   React.useEffect(() => {
-    apiStore.updateFilterData(selectedArtist, selectedGenre, selectedBook);
-  }, [selectedArtist, selectedGenre, selectedBook, apiStore]);
+    apiStore.updateFilterData(
+      filterStore.filterViewFilteredArtist,
+      filterStore.filterViewFilteredGenre,
+      filterStore.filterViewFilteredBook,
+    );
+  }, []);
 
-  const reset = async () => {
-    filterStore.updateFilteredArtist(undefined);
-    filterStore.updateFilteredGenre(undefined);
-    filterStore.updateFilteredBook(undefined);
-    filterStore.updateFilteredChapter(undefined);
-    await apiStore.resetAllSermons();
-    apiStore.updateAllSermons();
-    close();
-  };
-
-  const apply = async () => {
-    filterStore.updateFilteredArtist(selectedArtist);
-    filterStore.updateFilteredGenre(selectedGenre);
-    filterStore.updateFilteredBook(selectedBook);
-    filterStore.updateFilteredChapter(selectedChapter);
-    await apiStore.resetAllSermons();
-    apiStore.updateAllSermons();
-    close();
-  };
+  React.useEffect(() => {
+    apply();
+  }, [
+    filterStore.filterViewFilteredArtist,
+    filterStore.filterViewFilteredBook,
+    filterStore.filterViewFilteredGenre,
+    apply,
+  ]);
 
   return (
-    <View style={styles.container}>
-      <ModalHeader onClose={() => filterStore.setFilterViewVisible(false)} />
-      <View style={{flexDirection: 'row'}}>
-        <Text style={styles.title}>{strings.filter}</Text>
-        {apiStore.isLoadingFilterData && <ActivityIndicator />}
-      </View>
-      <View>
-        <Filter
-          title={strings.speaker}
-          items={userSessionStore.artists}
-          selectedItem={selectedArtist?.id ?? 'none'}
-          onChange={value => {
-            setSelectedArtist(
-              value.id === 'none' ? undefined : (value as Artist),
-            );
-          }}
-          setGestureRecognizerActive={props.setGestureRecognizerActive}
-        />
-        <Filter
-          title={strings.category}
-          items={userSessionStore.genres}
-          selectedItem={selectedGenre?.id ?? 'none'}
-          onChange={value =>
-            setSelectedGenre(value.id === 'none' ? undefined : (value as Genre))
-          }
-          setGestureRecognizerActive={props.setGestureRecognizerActive}
-        />
-        <Filter
-          title={strings.bible}
-          items={userSessionStore.books}
-          selectedItem={selectedBook?.id ?? 'none'}
-          onChange={value => {
-            setSelectedBook(value.id === 'none' ? undefined : (value as Book));
-          }}
-          setGestureRecognizerActive={props.setGestureRecognizerActive}
-        />
-        <Filter
-          title={strings.chapter}
-          items={userSessionStore.chapters}
-          selectedItem={selectedChapter?.id ?? 'none'}
-          onChange={value =>
-            setSelectedChapter(
-              value.id === 'none' ? undefined : (value as Chapter),
-            )
-          }
-          pickerPrefix={strings.chapter}
-          disabled={selectedBook === undefined}
-          setGestureRecognizerActive={props.setGestureRecognizerActive}
+    <SafeAreaView style={styles.container}>
+      <View style={styles.modalBackground}>
+        <TouchableWithoutFeedback
+          activeOpacity={0}
+          style={{height: '100%'}}
+          onPress={() => filterStore.setFilterViewVisible(false)}
         />
       </View>
-      <View style={styles.actionButtons}>
+      <View style={styles.modalHeader}>
+        <ModalHeader onClose={() => filterStore.setFilterViewVisible(false)} />
+      </View>
+      <View style={styles.modalContent}>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: true,
+            headerTintColor: Appearance.darkColor,
+          }}>
+          <Stack.Screen name="Filter" component={FilterEntry} />
+          <Stack.Screen name="Redner" component={FilterArtist} />
+          <Stack.Screen name="Kategorie" component={FilterCategory} />
+          <Stack.Screen name="Buch" component={FilterBook} />
+        </Stack.Navigator>
         <DWGButton
-          disabled={apiStore.isLoadingFilterData}
-          style="secondary"
-          title={strings.reset}
-          onPress={reset}
-        />
-        <DWGButton
-          disabled={apiStore.isLoadingFilterData}
           style="primary"
-          title={strings.apply}
-          onPress={apply}
+          title={strings.reset}
+          onPress={() => close()}
+          isLoading={apiStore.isLoadingFilterData}
         />
       </View>
+    </SafeAreaView>
+  );
+});
+
+const FilterBook = () => {
+  const {filterStore} = useStores();
+  return (
+    <Filter
+      selectCallback={filterStore.filterViewUpdateFilteredBook}
+      title={strings.bible}
+      items={filterStore.books}
+    />
+  );
+};
+const FilterArtist = () => {
+  const {filterStore} = useStores();
+  return (
+    <Filter
+      selectCallback={filterStore.filterViewUpdateFilteredArtist}
+      title={strings.speaker}
+      items={filterStore.artists}
+    />
+  );
+};
+const FilterCategory = () => {
+  const {filterStore} = useStores();
+  return (
+    <Filter
+      selectCallback={filterStore.filterViewUpdateFilteredGenre}
+      title={strings.category}
+      items={filterStore.genres}
+    />
+  );
+};
+interface FilterProps<Item> {
+  items: Item[];
+  title: string;
+  disabled?: boolean;
+  pickerPrefix?: string;
+  selectCallback: (value: Item) => void;
+}
+
+const Filter: React.FC<
+  FilterProps<Artist | Book | Genre | Chapter | NoFilter>
+> = observer(props => {
+  const navigation = useNavigation();
+
+  const [itemsList, setItemsList] = React.useState(props.items);
+  const {apiStore} = useStores();
+  React.useEffect(() => {
+    console.log(props.items.map(i => i.id));
+    setItemsList(props.items);
+  }, [props.items, setItemsList]);
+  const onPress = (item: Artist | Book | Genre | Chapter | NoFilter) => {
+    props.selectCallback(item);
+    navigation.navigate('Filter');
+  };
+  return apiStore.isLoadingFilterData ? null : (
+    <View style={filterStyles.flatList}>
+      <FlatList
+        data={itemsList}
+        renderItem={({item, index}) => (
+          <TouchableHighlight onPress={() => onPress(item)}>
+            <View style={filterStyles.button} key={`picker_${item.id}`}>
+              <Text style={filterStyles.title}>{`${
+                props.pickerPrefix && index !== 0 ? props.pickerPrefix : ''
+              } ${item.name} ${
+                item.numTitles !== 0 ? `(${item.numTitles})` : ''
+              }`}</Text>
+            </View>
+          </TouchableHighlight>
+        )}
+      />
     </View>
   );
 });
 
-interface FilterProps<Items> {
-  items: Items;
-  title: string;
-  selectedItem: string;
-  disabled?: boolean;
-  pickerPrefix?: string;
-  onChange: (item: Items) => void;
-  setGestureRecognizerActive: (active: boolean) => void;
-}
+const FilterEntry = observer(props => {
+  const navigation = useNavigation();
 
-const Filter: React.FC<
-  FilterProps<(Artist | Book | Genre | Chapter | NoFilter)[]>
-> = observer(props => {
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const [selectedPickerValue, setSelectedPickerValue] = React.useState(
-    props.selectedItem,
-  );
-  const [itemsList, setItemsList] = React.useState(props.items);
-
-  const {apiStore} = useStores();
-  React.useEffect(() => setItemsList(props.items), [props.items]);
-  React.useEffect(() => {
-    if (modalVisible) {
-      props.setGestureRecognizerActive(false);
-    } else {
-      props.setGestureRecognizerActive(true);
+  const data = ['Redner', 'Kategorie', 'Buch'];
+  const onPress = d => {
+    if (d === 'Redner') {
+      navigation.navigate('Redner');
     }
-  }, [modalVisible]);
-
-  React.useEffect(() => {
-    // Reset selected value if filter gets disabled
-    if (props.disabled) {
-      props.onChange(props.items[0]);
+    if (d === 'Kategorie') {
+      navigation.navigate('Kategorie');
     }
-  }, [props.disabled]);
-
-  const apply = () => {
-    props.onChange(
-      props.items.find(i => i.id === selectedPickerValue) ?? props.items[0],
-    );
-    setModalVisible(false);
+    if (d === 'Buch') {
+      navigation.navigate('Buch');
+    }
   };
 
   return (
     <>
-      <View style={styles.buttonsContainer}>
-        <DWGFilterButton
-          title={props.title}
-          onPress={() => setModalVisible(true)}
-          value={
-            props.selectedItem === 'none'
-              ? ''
-              : props.items.find(item => item.id === props.selectedItem)
-                  ?.name ?? ''
-          }
-          disabled={
-            apiStore.isLoadingFilterData ||
-            props.disabled ||
-            props.items.length === 1
-          }
+      <View style={filterStyles.flatList}>
+        <FlatList
+          data={data}
+          renderItem={({item}) => (
+            <TouchableHighlight onPress={() => onPress(item)}>
+              <View style={filterStyles.button} key={`picker_${item}`}>
+                <Text style={filterStyles.title}>{item}</Text>
+              </View>
+            </TouchableHighlight>
+          )}
         />
-        <DWGModal
-          title={props.title}
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}>
-          <Picker
-            selectedValue={selectedPickerValue}
-            onValueChange={itemValue => setSelectedPickerValue(itemValue)}>
-            {itemsList.map((item, index) => (
-              <Picker.Item
-                key={`picker_${item.id}`}
-                label={`${
-                  props.pickerPrefix && index !== 0 ? props.pickerPrefix : ''
-                } ${item.name} ${
-                  item.numTitles !== 0 ? `(${item.numTitles})` : ''
-                }`}
-                value={item.id}
-              />
-            ))}
-          </Picker>
-          <View style={styles.buttonsContainer}>
-            <DWGButton
-              title={strings.select}
-              style="secondary"
-              onPress={apply}
-            />
-          </View>
-        </DWGModal>
       </View>
     </>
   );
@@ -229,11 +206,11 @@ const Filter: React.FC<
 
 const styles = StyleSheet.create({
   container: {
-    height: '50%',
-    marginTop: 'auto',
-    backgroundColor: 'white',
-    borderTopColor: Appearance.baseColor,
-    borderTopWidth: 1,
+    flex: 1,
+    justifyContent: 'flex-end',
+    shadowOffset: {height: 10, width: 0},
+    shadowColor: 'white',
+    shadowOpacity: 1.0,
   },
   title: {
     textAlign: 'center',
@@ -242,27 +219,35 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
   },
-  buttonsContainer: {
-    flexDirection: 'row',
-  },
-  listEntry: {
-    height: 40,
-    width: '100%',
+  modalContent: {
     backgroundColor: 'white',
-    borderBottomColor: 'lightgrey',
+    height: '50%',
+  },
+  modalBackground: {
+    height: '40%',
+  },
+  modalHeader: {
+    height: 40,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    borderTopWidth: 1,
+    borderTopColor: Appearance.greyColor,
+    paddingLeft: 10,
+    paddingTop: 10,
+  },
+});
+
+const filterStyles = StyleSheet.create({
+  button: {
+    borderStyle: 'solid',
     borderBottomWidth: 1,
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  listEntryText: {
-    fontSize: 16,
-  },
-  iconContainer: {
-    width: 40,
-  },
-  actionButtons: {
-    marginTop: 30,
+    borderBottomColor: Appearance.greyColor,
+    padding: 15,
+    backgroundColor: 'white',
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
+  flatList: {height: '100%'},
+  title: {color: Appearance.darkColor},
 });

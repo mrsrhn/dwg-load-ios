@@ -14,7 +14,8 @@ export const PlayerView = observer(() => {
 
   const showGenreTitles = async (genre: Genre) => {
     filterStore.resetFilter();
-    filterStore.updateFilteredGenre(genre);
+    filterStore.filterViewUpdateFilteredGenre(genre);
+    filterStore.updateFilteredGenre();
     userSessionStore.setPlayerModalVisible(false);
     RootNavigation.goBack();
     RootNavigation.navigate('TabAllSermons', {});
@@ -24,7 +25,8 @@ export const PlayerView = observer(() => {
 
   const showArtistTitles = async (artist: Artist) => {
     filterStore.resetFilter();
-    filterStore.updateFilteredArtist(artist);
+    filterStore.filterViewUpdateFilteredArtist(artist);
+    filterStore.updateFilteredArtist();
     userSessionStore.setPlayerModalVisible(false);
     RootNavigation.goBack();
     RootNavigation.navigate('TabAllSermons', {});
@@ -34,7 +36,8 @@ export const PlayerView = observer(() => {
 
   const showBookTitles = async (book: Book) => {
     filterStore.resetFilter();
-    filterStore.updateFilteredBook(book);
+    filterStore.filterViewUpdateFilteredBook(book);
+    filterStore.updateFilteredBook();
     userSessionStore.setPlayerModalVisible(false);
     RootNavigation.goBack();
     RootNavigation.navigate('TabAllSermons', {});
@@ -46,8 +49,9 @@ export const PlayerView = observer(() => {
     <GestureRecognizer
       onSwipeDown={() => {
         if (!scrollViewIsOnTop) return;
-        if (!userSessionStore.artistModalVisible)
+        if (!userSessionStore.artistModalVisible) {
           userSessionStore.setPlayerModalVisible(false);
+        }
       }}>
       <Modal
         animationType="slide"

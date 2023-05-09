@@ -11,7 +11,7 @@ import {
   ApiBook,
   ApiChapter,
 } from '../types/apiStoreTypes';
-import {Artist, Book, Genre} from '../types/userSessionStoreTypes';
+import {Artist, Book, Genre, NoFilter} from '../types/userSessionStoreTypes';
 import {strings} from '../strings';
 export enum Endpoints {
   title = 'title',
@@ -354,9 +354,9 @@ export class ApiStore {
 
   updateFilterData = action(
     async (
-      artist: Artist | undefined,
-      genre: Genre | undefined,
-      book: Book | undefined,
+      artist: Artist | NoFilter | undefined,
+      genre: Genre | NoFilter | undefined,
+      book: Book | NoFilter | undefined,
     ) => {
       runInAction(() => {
         this.isLoadingFilterData = true;

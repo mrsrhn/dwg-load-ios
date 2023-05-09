@@ -5,12 +5,7 @@ import {
   Sermon,
   AlbumTitles,
   LocalSermonsFileEntry,
-  Artist,
-  Genre,
-  Book,
-  Chapter,
   SortOption,
-  NoFilter,
 } from '../types/userSessionStoreTypes';
 import {strings} from '../strings';
 
@@ -36,10 +31,6 @@ export class UserSessionStore {
       localSermons: observable,
       newSermons: computed,
       collections: computed,
-      artists: computed,
-      genres: computed,
-      books: computed,
-      chapters: computed,
       allSermons: computed,
       searchedSermons: computed,
       downloadedSermons: computed,
@@ -126,60 +117,6 @@ export class UserSessionStore {
 
   get collections(): Collection[] {
     return this.root.apiStore.collections;
-  }
-
-  get artists(): (NoFilter | Artist)[] {
-    return [
-      {id: 'none', name: strings.notFiltered, numTitles: 0},
-      ...this.root.apiStore.artists.map(artist => ({
-        id: artist.id,
-        name: artist.name,
-        numTitles: Number(artist.num_titles),
-        description: artist.description,
-        image: artist.image,
-        createdAt: artist.created_at,
-        updatedAt: artist.updated_at,
-      })),
-    ];
-  }
-
-  get genres(): (NoFilter | Genre)[] {
-    return [
-      {id: 'none', name: strings.notFiltered, numTitles: 0},
-      ...this.root.apiStore.genres.map(genre => ({
-        id: genre.id,
-        name: genre.name,
-        numTitles: Number(genre.num_titles),
-        createdAt: genre.created_at,
-        updatedAt: genre.updated_at,
-      })),
-    ];
-  }
-
-  get books(): (NoFilter | Book)[] {
-    return [
-      {id: 'none', name: strings.notFiltered, numTitles: 0},
-      ...this.root.apiStore.books.map(book => ({
-        id: book.id,
-        name: book.long,
-        short: book.short,
-        long: book.long,
-        numTitles: book.num_titles,
-      })),
-    ];
-  }
-
-  get chapters(): (NoFilter | Chapter)[] {
-    return [
-      {id: 'none', name: strings.notFiltered, numTitles: 0},
-      ...this.root.apiStore.chapters.map(chapter => ({
-        chapter: chapter.chapter,
-        name: chapter.chapter,
-        id: chapter.id,
-        numTitles: chapter.num_titles,
-        count: chapter.count,
-      })),
-    ];
   }
 
   get allSermons(): Sermon[] {

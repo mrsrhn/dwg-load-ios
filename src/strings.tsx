@@ -90,6 +90,7 @@ const languages = {
     delete: 'Löschen',
     deleteQuestion: 'Lokale Datei löschen?',
     info: 'Info',
+    showResults: 'Ergebnisse Anzeigen',
   },
   cz: {
     base: 'https://load.dwgradio.net/cz/',
@@ -181,6 +182,7 @@ const languages = {
     delete: 'Löschen',
     deleteQuestion: 'Lokale Datei löschen?',
     info: 'Info',
+    showResults: 'Ergebnisse Anzeigen',
   },
   ru: {
     base: 'https://load.dwgradio.net/ru/',
@@ -270,6 +272,7 @@ const languages = {
     delete: 'Удалить',
     deleteQuestion: 'Удалить локальный файл?',
     info: 'Информация',
+    showResults: 'Ergebnisse Anzeigen',
   },
 };
 
