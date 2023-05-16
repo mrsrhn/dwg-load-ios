@@ -9,6 +9,12 @@ import {
 } from '../types/userSessionStoreTypes';
 import {RootStore} from './rootStore';
 
+export const NOFILTERVALUE: NoFilter = {
+  id: 'none',
+  name: strings.notFiltered,
+  numTitles: 0,
+};
+
 export class FilterStore {
   root: RootStore;
   // Filter states
@@ -64,7 +70,7 @@ export class FilterStore {
 
   get artists(): (NoFilter | Artist)[] {
     return [
-      {id: 'none', name: strings.notFiltered, numTitles: 0},
+      NOFILTERVALUE,
       ...this.root.apiStore.artists.map(artist => ({
         id: artist.id,
         name: artist.name,
@@ -79,7 +85,7 @@ export class FilterStore {
 
   get genres(): (NoFilter | Genre)[] {
     return [
-      {id: 'none', name: strings.notFiltered, numTitles: 0},
+      NOFILTERVALUE,
       ...this.root.apiStore.genres.map(genre => ({
         id: genre.id,
         name: genre.name,
@@ -92,7 +98,7 @@ export class FilterStore {
 
   get books(): (NoFilter | Book)[] {
     return [
-      {id: 'none', name: strings.notFiltered, numTitles: 0},
+      NOFILTERVALUE,
       ...this.root.apiStore.books.map(book => ({
         id: book.id,
         name: book.long,
@@ -105,7 +111,7 @@ export class FilterStore {
 
   get chapters(): (NoFilter | Chapter)[] {
     return [
-      {id: 'none', name: strings.notFiltered, numTitles: 0},
+      NOFILTERVALUE,
       ...this.root.apiStore.chapters.map(chapter => ({
         chapter: chapter.chapter,
         name: chapter.chapter,

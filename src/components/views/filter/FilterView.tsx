@@ -1,5 +1,12 @@
 import * as React from 'react';
-import {StyleSheet, View, Text, FlatList, SafeAreaView} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  FlatList,
+  SafeAreaView,
+  Dimensions,
+} from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {Appearance} from '../../../appearance';
 import {
@@ -15,10 +22,12 @@ import {useStores} from '../../../hooks/useStores';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import {
+  ScrollView,
   TouchableHighlight,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
+import {FilterTag} from './FilterTag';
 
 const Stack = createStackNavigator();
 interface FilterViewProps {}
@@ -75,7 +84,46 @@ export const FilterView: React.FC<FilterViewProps> = observer(() => {
       <View style={styles.modalContent}>
         <Stack.Navigator
           screenOptions={{
-            headerShown: true,
+            headerStyle: {height: 70},
+            headerTitleContainerStyle: {
+              paddingTop: 13,
+              justifyContent: 'flex-start',
+            },
+            headerLeftContainerStyle: {
+              zIndex: 999,
+              justifyContent: 'flex-start',
+            },
+            headerRight: () => (
+              <View
+                style={{
+                  position: 'absolute',
+                  paddingTop: 30,
+                  minWidth: Dimensions.get('window').width,
+                }}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  <View style={filterStyles.filterTagsContainer}>
+                    {!!filterStore.filterViewFilteredArtist?.numTitles ? (
+                      <FilterTag
+                        type="artist"
+                        title={filterStore.filterViewFilteredArtist.name}
+                      />
+                    ) : null}
+                    {!!filterStore.filterViewFilteredGenre?.numTitles ? (
+                      <FilterTag
+                        type="genre"
+                        title={filterStore.filterViewFilteredGenre.name}
+                      />
+                    ) : null}
+                    {!!filterStore.filterViewFilteredBook?.numTitles ? (
+                      <FilterTag
+                        type="book"
+                        title={filterStore.filterViewFilteredBook.name}
+                      />
+                    ) : null}
+                  </View>
+                </ScrollView>
+              </View>
+            ),
             headerTintColor: Appearance.darkColor,
           }}>
           <Stack.Screen name="Filter" component={FilterEntry} />
@@ -204,7 +252,7 @@ const FilterEntry = observer(() => {
 
 const styles = StyleSheet.create({
   container: {
-    height: '50%',
+    height: '60%',
     flex: 1,
     shadowOffset: {height: 100, width: 0},
     shadowColor: 'white',
@@ -218,11 +266,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   modalBackground: {
-    height: '50%',
+    height: '40%',
   },
 });
 
 const filterStyles = StyleSheet.create({
+  filterTagsContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
   button: {
     borderStyle: 'solid',
     borderBottomWidth: 1,
