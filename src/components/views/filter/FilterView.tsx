@@ -10,7 +10,6 @@ import {
   NoFilter,
 } from '../../../types/userSessionStoreTypes';
 import {DWGButton} from '../../DWGButton';
-import {ModalHeader} from '../../ModalHeader';
 import {strings} from '../../../strings';
 import {useStores} from '../../../hooks/useStores';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -23,9 +22,11 @@ import {useNavigation} from '@react-navigation/native';
 
 const Stack = createStackNavigator();
 interface FilterViewProps {}
+
 export const FilterView: React.FC<FilterViewProps> = observer(() => {
   const {filterStore} = useStores();
   const {apiStore} = useStores();
+  const navigation = useNavigation();
 
   const close = () => {
     filterStore.filterViewUpdateFilteredArtist(undefined);
@@ -67,13 +68,9 @@ export const FilterView: React.FC<FilterViewProps> = observer(() => {
     <SafeAreaView style={styles.container}>
       <View style={styles.modalBackground}>
         <TouchableWithoutFeedback
-          activeOpacity={0}
           style={{height: '100%'}}
-          onPress={() => filterStore.setFilterViewVisible(false)}
+          onPress={() => navigation.navigate('Alle')}
         />
-      </View>
-      <View style={styles.modalHeader}>
-        <ModalHeader onClose={() => filterStore.setFilterViewVisible(false)} />
       </View>
       <View style={styles.modalContent}>
         <Stack.Navigator
@@ -90,7 +87,6 @@ export const FilterView: React.FC<FilterViewProps> = observer(() => {
           style="primary"
           title={strings.reset}
           onPress={() => close()}
-          isLoading={apiStore.isLoadingFilterData}
         />
       </View>
     </SafeAreaView>
@@ -142,16 +138,18 @@ const Filter: React.FC<
 
   const [itemsList, setItemsList] = React.useState(props.items);
   const {apiStore} = useStores();
+
   React.useEffect(() => {
-    console.log(props.items.map(i => i.id));
     setItemsList(props.items);
   }, [props.items, setItemsList]);
+
   const onPress = (item: Artist | Book | Genre | Chapter | NoFilter) => {
     props.selectCallback(item);
     navigation.navigate('Filter');
   };
+
   return apiStore.isLoadingFilterData ? null : (
-    <View style={filterStyles.flatList}>
+    <View>
       <FlatList
         data={itemsList}
         renderItem={({item, index}) => (
@@ -170,7 +168,7 @@ const Filter: React.FC<
   );
 });
 
-const FilterEntry = observer(props => {
+const FilterEntry = observer(() => {
   const navigation = useNavigation();
 
   const data = ['Redner', 'Kategorie', 'Buch'];
@@ -188,7 +186,7 @@ const FilterEntry = observer(props => {
 
   return (
     <>
-      <View style={filterStyles.flatList}>
+      <View>
         <FlatList
           data={data}
           renderItem={({item}) => (
@@ -206,35 +204,21 @@ const FilterEntry = observer(props => {
 
 const styles = StyleSheet.create({
   container: {
+    height: '50%',
     flex: 1,
-    justifyContent: 'flex-end',
-    shadowOffset: {height: 10, width: 0},
+    shadowOffset: {height: 100, width: 0},
     shadowColor: 'white',
     shadowOpacity: 1.0,
   },
-  title: {
-    textAlign: 'center',
-    color: Appearance.baseColor,
-    flex: 1,
-    fontWeight: 'bold',
-    fontSize: 18,
-  },
   modalContent: {
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingTop: 20,
     backgroundColor: 'white',
-    height: '50%',
+    flex: 1,
   },
   modalBackground: {
-    height: '40%',
-  },
-  modalHeader: {
-    height: 40,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    borderTopWidth: 1,
-    borderTopColor: Appearance.greyColor,
-    paddingLeft: 10,
-    paddingTop: 10,
+    height: '50%',
   },
 });
 
@@ -248,6 +232,6 @@ const filterStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
-  flatList: {height: '100%'},
+
   title: {color: Appearance.darkColor},
 });

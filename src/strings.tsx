@@ -68,7 +68,7 @@ const languages = {
     bicFormatted: 'BIC: GENODES1VHN',
     or: 'Oder:',
     sleepTimer: 'Einschlaf-Timer',
-    notFiltered: 'Nicht gefiltert',
+    notFiltered: 'Alle',
     saved: 'Gemerkt!',
     removedSaved: 'Von der Merkliste entfernt!',
     minutes: 'Minuten',

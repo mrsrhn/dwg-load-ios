@@ -4,14 +4,12 @@ import {
   View,
   SafeAreaView,
   FlatList,
-  Modal,
   Text,
   RefreshControl,
 } from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {SingleSermonListEntry} from '../lists/singleSermonListEntry';
 import {AlbumListEntry} from '../lists/albumListEntry';
-import {FilterView} from './filter/FilterView';
 import {Appearance} from '../../appearance';
 
 import {wait} from './NewSermonsView';
@@ -105,13 +103,6 @@ export const AllSermonsView = observer(() => {
             }
           }}
         />
-
-        <Modal
-          visible={filterStore.filterModalVisible}
-          animationType="slide"
-          transparent={true}>
-          <FilterView />
-        </Modal>
       </View>
     </SafeAreaView>
   );

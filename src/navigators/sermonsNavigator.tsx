@@ -9,6 +9,7 @@ import {Appearance} from '../appearance';
 import {useSortActions} from '../hooks/useSortActions';
 import {strings} from '../strings';
 import {useStores} from '../hooks/useStores';
+import {FilterView} from '../components/views/filter/FilterView';
 
 interface SermonsNavigatorProps {
   baseComponentName: string;
@@ -65,7 +66,7 @@ export const SermonsNavigator = observer((props: SermonsNavigatorProps) => {
             <Pressable
               style={{paddingLeft: 15}}
               key="filter-button"
-              onPress={() => filterStore.setFilterViewVisible(true)}>
+              onPress={() => navigation.navigate('FilterView')}>
               {({pressed}) => (
                 <Ionicons
                   name={
@@ -134,6 +135,15 @@ export const SermonsNavigator = observer((props: SermonsNavigatorProps) => {
             headerTintColor: Appearance.darkColor,
           })}
         />
+      </Stack.Group>
+      <Stack.Group
+        screenOptions={{
+          presentation: 'modal',
+          headerStyle: {backgroundColor: 'transparent'},
+          headerTitle: '',
+          contentStyle: {backgroundColor: 'transparent'},
+        }}>
+        <Stack.Screen name="FilterView" component={FilterView} />
       </Stack.Group>
     </Stack.Navigator>
   );

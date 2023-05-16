@@ -361,9 +361,9 @@ export class ApiStore {
       runInAction(() => {
         this.isLoadingFilterData = true;
       });
-      const artistParameter = artist?.id;
-      const genreParameter = genre?.id;
-      const bookParameter = book?.id;
+      const artistParameter = artist?.id === 'none' ? undefined : artist?.id;
+      const genreParameter = genre?.id === 'none' ? undefined : genre?.id;
+      const bookParameter = book?.id === 'none' ? undefined : book?.id;
 
       await Promise.all([
         this.getFilterData(Endpoints.artist, [
