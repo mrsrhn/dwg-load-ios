@@ -64,7 +64,9 @@ export const SermonsNavigator = observer((props: SermonsNavigatorProps) => {
       baseComponentName === strings.all
         ? [
             <Pressable
-              style={{paddingLeft: 15}}
+              style={{
+                padding: 15,
+              }}
               key="filter-button"
               onPress={() => navigation.navigate('FilterView')}>
               {({pressed}) => (
@@ -79,7 +81,7 @@ export const SermonsNavigator = observer((props: SermonsNavigatorProps) => {
             </Pressable>,
             <Pressable
               style={{
-                paddingLeft: 15,
+                padding: 15,
                 flexDirection: 'row',
                 alignItems: 'center',
               }}

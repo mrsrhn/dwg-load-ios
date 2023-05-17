@@ -225,7 +225,7 @@ export const Player: React.FC<PlayerProps> = observer(props => {
                       : undefined
                   }
                   style="secondary"
-                  key={`${title.id}_button`}
+                  key={`${selectedSermon.id}_${title.id}_button`}
                   selected={title.id === selectedSermon.id}
                   onPress={() => {
                     userSessionStore.setSelectedSermon(title);
