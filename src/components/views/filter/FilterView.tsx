@@ -84,7 +84,7 @@ export const FilterView: React.FC<FilterViewProps> = observer(() => {
       <View style={styles.modalContent}>
         <Stack.Navigator
           screenOptions={{
-            headerStyle: {height: 70},
+            headerStyle: {height: 80},
             headerTitleContainerStyle: {
               paddingTop: 13,
               justifyContent: 'flex-start',
@@ -97,24 +97,24 @@ export const FilterView: React.FC<FilterViewProps> = observer(() => {
               <View
                 style={{
                   position: 'absolute',
-                  paddingTop: 30,
+                  paddingTop: 50,
                   minWidth: Dimensions.get('window').width,
                 }}>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   <View style={filterStyles.filterTagsContainer}>
-                    {!!filterStore.filterViewFilteredArtist?.numTitles ? (
+                    {filterStore.filterViewFilteredArtist?.numTitles ? (
                       <FilterTag
                         type="artist"
                         title={filterStore.filterViewFilteredArtist.name}
                       />
                     ) : null}
-                    {!!filterStore.filterViewFilteredGenre?.numTitles ? (
+                    {filterStore.filterViewFilteredGenre?.numTitles ? (
                       <FilterTag
                         type="genre"
                         title={filterStore.filterViewFilteredGenre.name}
                       />
                     ) : null}
-                    {!!filterStore.filterViewFilteredBook?.numTitles ? (
+                    {filterStore.filterViewFilteredBook?.numTitles ? (
                       <FilterTag
                         type="book"
                         title={filterStore.filterViewFilteredBook.name}
