@@ -35,7 +35,6 @@ export const SearchView = observer(() => {
     <SafeAreaView style={styles.container}>
       <SearchBar
         ref={searchBar}
-        tintColor={Appearance.darkColor}
         cancelButtonText={strings.cancel}
         placeholder={searchString || strings.enterSearchString}
         onChangeText={text => setSearchString(text)}
