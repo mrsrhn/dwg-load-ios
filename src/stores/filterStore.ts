@@ -18,7 +18,6 @@ export const NOFILTERVALUE: NoFilter = {
 export class FilterStore {
   root: RootStore;
   // Filter states
-  filterModalVisible: boolean = false;
   filteredArtist?: Artist | NoFilter = undefined;
   filteredGenre?: Genre | NoFilter = undefined;
   filteredBook?: Book | NoFilter = undefined;
@@ -33,7 +32,6 @@ export class FilterStore {
     this.root = root;
 
     makeObservable(this, {
-      filterModalVisible: observable,
       filteredArtist: observable,
       filteredGenre: observable,
       filteredBook: observable,
@@ -121,10 +119,6 @@ export class FilterStore {
       })),
     ];
   }
-
-  setFilterViewVisible = action((visible: boolean) => {
-    this.filterModalVisible = visible;
-  });
 
   updateFilteredArtist = action(() => {
     this.filteredArtist = this.filterViewFilteredArtist;

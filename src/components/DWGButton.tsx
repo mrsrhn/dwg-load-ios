@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
     borderColor: Appearance.baseColor,
     color: Appearance.baseColor,
     borderWidth: 2,
+    flex: 1,
   },
   primary: {backgroundColor: Appearance.baseColor, color: 'white'},
   iconContainer: {

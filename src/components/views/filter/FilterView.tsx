@@ -37,14 +37,14 @@ export const FilterView: React.FC<FilterViewProps> = observer(() => {
   const {apiStore} = useStores();
   const navigation = useNavigation();
 
-  const close = () => {
+  const resetAndClose = () => {
     filterStore.filterViewUpdateFilteredArtist(undefined);
     filterStore.filterViewUpdateFilteredGenre(undefined);
     filterStore.filterViewUpdateFilteredBook(undefined);
     filterStore.filterViewUpdateFilteredChapter(undefined);
 
-    filterStore.setFilterViewVisible(false);
     apply();
+    navigation.navigate('Alle');
   };
 
   const apply = React.useCallback(async () => {
@@ -93,6 +93,7 @@ export const FilterView: React.FC<FilterViewProps> = observer(() => {
               zIndex: 999,
               justifyContent: 'flex-start',
             },
+
             headerRight: () => (
               <View
                 style={{
@@ -126,16 +127,39 @@ export const FilterView: React.FC<FilterViewProps> = observer(() => {
             ),
             headerTintColor: Appearance.darkColor,
           }}>
-          <Stack.Screen name="Filter" component={FilterEntry} />
-          <Stack.Screen name="Redner" component={FilterArtist} />
-          <Stack.Screen name="Kategorie" component={FilterCategory} />
-          <Stack.Screen name="Buch" component={FilterBook} />
+          <Stack.Screen
+            options={{headerBackTitle: strings.back}}
+            name="Verfügbare Filter"
+            component={FilterEntry}
+          />
+          <Stack.Screen
+            options={{headerBackTitle: strings.filter}}
+            name="Redner"
+            component={FilterArtist}
+          />
+          <Stack.Screen
+            options={{headerBackTitle: strings.filter}}
+            name="Kategorie"
+            component={FilterCategory}
+          />
+          <Stack.Screen
+            options={{headerBackTitle: strings.filter}}
+            name="Buch"
+            component={FilterBook}
+          />
         </Stack.Navigator>
-        <DWGButton
-          style="primary"
-          title={strings.reset}
-          onPress={() => close()}
-        />
+        <View style={{flexDirection: 'row'}}>
+          <DWGButton
+            style="secondary"
+            title={strings.reset}
+            onPress={() => resetAndClose()}
+          />
+          <DWGButton
+            style="primary"
+            title={strings.apply}
+            onPress={() => navigation.navigate('Alle')}
+          />
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -264,6 +288,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     backgroundColor: 'white',
     flex: 1,
+    display: 'flex',
   },
   modalBackground: {
     height: '40%',
