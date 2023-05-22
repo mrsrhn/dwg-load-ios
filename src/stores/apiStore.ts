@@ -315,10 +315,12 @@ export class ApiStore {
   });
 
   updateAllSermonsTotal = action(async () => {
+    runInAction(() => (this.isLoadingAllSermons = true));
     const data = await this.fetchData(this.allSermonsSearchUrl);
     runInAction(() => {
       this.allSermonsTotal = data.paging.total;
     });
+    runInAction(() => (this.isLoadingAllSermons = false));
   });
 
   updateNewSermonsTotal = action(async () => {

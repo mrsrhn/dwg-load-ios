@@ -6,6 +6,7 @@ import {
   FlatList,
   Text,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {SingleSermonListEntry} from '../lists/singleSermonListEntry';
@@ -52,57 +53,65 @@ export const AllSermonsView = observer(() => {
         </View>
       )}
       <View style={styles.container}>
-        <FlatList
-          ListEmptyComponent={
-            !netInfo.isInternetReachable ? (
-              <ListInfo info={strings.noConnection} />
-            ) : null
-          }
-          refreshControl={
-            <RefreshControl
-              refreshing={apiStore.isLoadingAllSermons || refreshing}
-              onRefresh={async () => {
-                if (netInfo.isInternetReachable) {
-                  setRefreshing(true);
-                  wait(1000)
-                    .then(async () => {
-                      await apiStore.resetAllSermons();
-                      apiStore.updateAllSermons();
-                    })
-                    .then(() => setRefreshing(false));
-                } else {
-                  Toast.showWithGravity(strings.noConnection, 2, Toast.BOTTOM);
-                }
-              }}
-            />
-          }
-          data={userSessionStore.allSermons}
-          renderItem={({item}) => {
-            return item.groupalbum ? (
-              <AlbumListEntry
-                key={`album-list-entry_${item.id}_${item.artistId}`}
-                album={item.album}
-                artist={item.artist?.name}
-                genre={
-                  item.Genres && item.Genres.length
-                    ? item.Genres[0].name ?? undefined
-                    : undefined
-                }
-              />
-            ) : (
-              <SingleSermonListEntry
-                key={`sermon-list-entry_${item.id}_${item.artistId}`}
-                sermon={item}
-              />
-            );
-          }}
-          onEndReachedThreshold={5}
-          onEndReached={() => {
-            if (!apiStore.isLoadingAllSermons) {
-              apiStore.updateAllSermons();
+        {apiStore.isLoadingAllSermons ? (
+          <ActivityIndicator style={{paddingTop: 20}} size="large" />
+        ) : (
+          <FlatList
+            ListEmptyComponent={
+              !netInfo.isInternetReachable ? (
+                <ListInfo info={strings.noConnection} />
+              ) : null
             }
-          }}
-        />
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={async () => {
+                  if (netInfo.isInternetReachable) {
+                    setRefreshing(true);
+                    wait(1000)
+                      .then(async () => {
+                        await apiStore.resetAllSermons();
+                        apiStore.updateAllSermons();
+                      })
+                      .then(() => setRefreshing(false));
+                  } else {
+                    Toast.showWithGravity(
+                      strings.noConnection,
+                      2,
+                      Toast.BOTTOM,
+                    );
+                  }
+                }}
+              />
+            }
+            data={userSessionStore.allSermons}
+            renderItem={({item}) => {
+              return item.groupalbum ? (
+                <AlbumListEntry
+                  key={`album-list-entry_${item.id}_${item.artistId}`}
+                  album={item.album}
+                  artist={item.artist?.name}
+                  genre={
+                    item.Genres && item.Genres.length
+                      ? item.Genres[0].name ?? undefined
+                      : undefined
+                  }
+                />
+              ) : (
+                <SingleSermonListEntry
+                  key={`sermon-list-entry_${item.id}_${item.artistId}`}
+                  sermon={item}
+                />
+              );
+            }}
+            onEndReachedThreshold={5}
+            onEndReached={() => {
+              if (!apiStore.isLoadingAllSermons) {
+                apiStore.updateAllSermons();
+              }
+            }}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
