@@ -14,7 +14,7 @@ const languages = {
     bible: 'Bibel',
     biblePassage: 'Bibelstelle',
     chapter: 'Kapitel',
-    reset: 'Alle Filter löschen',
+    reset: 'Zurücksetzen',
     apply: 'Ergebnisse anzeigen',
     cancel: 'Abbrechen',
     search: 'Suchen',

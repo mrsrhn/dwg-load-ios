@@ -128,8 +128,11 @@ export const FilterView: React.FC<FilterViewProps> = observer(() => {
             headerTintColor: Appearance.darkColor,
           }}>
           <Stack.Screen
-            options={{headerBackTitle: strings.back}}
-            name="Verfügbare Filter"
+            options={{
+              headerBackTitle: strings.back,
+              headerTitle: 'Verfügbare Filter',
+            }}
+            name="Filter"
             component={FilterEntry}
           />
           <Stack.Screen
