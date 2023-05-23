@@ -39,7 +39,10 @@ export const CollectionTitlesList = observer(({route}: Props) => {
                 genre={item.Genres?.length ? item.Genres[0].name : undefined}
               />
             ) : (
-              <SingleSermonListEntry key={item.id} sermon={item} />
+              <SingleSermonListEntry
+                key={`singleSermonListEntry_${item.id}`}
+                sermon={item}
+              />
             );
           }}
         />

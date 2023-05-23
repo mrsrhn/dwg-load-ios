@@ -6,6 +6,7 @@ import {
   FlatList,
   SafeAreaView,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {Appearance} from '../../../appearance';
@@ -29,6 +30,7 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import {FilterTag} from './FilterTag';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {FilterTagsBar} from './FilterTagsBar';
 
 const Stack = createStackNavigator();
 interface FilterViewProps {}
@@ -71,6 +73,7 @@ export const FilterView: React.FC<FilterViewProps> = observer(() => {
     filterStore.filterViewFilteredArtist,
     filterStore.filterViewFilteredBook,
     filterStore.filterViewFilteredGenre,
+    filterStore.filterViewFilteredChapter,
     apply,
   ]);
 
@@ -102,28 +105,7 @@ export const FilterView: React.FC<FilterViewProps> = observer(() => {
                   paddingTop: 50,
                   minWidth: Dimensions.get('window').width,
                 }}>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  <View style={filterStyles.filterTagsContainer}>
-                    {filterStore.filterViewFilteredArtist?.numTitles ? (
-                      <FilterTag
-                        type="artist"
-                        title={filterStore.filterViewFilteredArtist.name}
-                      />
-                    ) : null}
-                    {filterStore.filterViewFilteredGenre?.numTitles ? (
-                      <FilterTag
-                        type="genre"
-                        title={filterStore.filterViewFilteredGenre.name}
-                      />
-                    ) : null}
-                    {filterStore.filterViewFilteredBook?.numTitles ? (
-                      <FilterTag
-                        type="book"
-                        title={filterStore.filterViewFilteredBook.name}
-                      />
-                    ) : null}
-                  </View>
-                </ScrollView>
+                <FilterTagsBar />
               </View>
             ),
             headerTintColor: Appearance.darkColor,
@@ -174,7 +156,7 @@ export const FilterView: React.FC<FilterViewProps> = observer(() => {
   );
 });
 
-const FilterBook = () => {
+const FilterBook = observer(() => {
   const {filterStore} = useStores();
   return (
     <Filter
@@ -183,8 +165,8 @@ const FilterBook = () => {
       items={filterStore.books}
     />
   );
-};
-const FilterChapter = () => {
+});
+const FilterChapter = observer(() => {
   const {filterStore} = useStores();
   return (
     <Filter
@@ -193,8 +175,8 @@ const FilterChapter = () => {
       items={filterStore.chapters}
     />
   );
-};
-const FilterArtist = () => {
+});
+const FilterArtist = observer(() => {
   const {filterStore} = useStores();
   return (
     <Filter
@@ -203,8 +185,8 @@ const FilterArtist = () => {
       items={filterStore.artists}
     />
   );
-};
-const FilterCategory = () => {
+});
+const FilterCategory = observer(() => {
   const {filterStore} = useStores();
   return (
     <Filter
@@ -213,7 +195,7 @@ const FilterCategory = () => {
       items={filterStore.genres}
     />
   );
-};
+});
 interface FilterProps<Item> {
   items: Item[];
   title: string;
@@ -227,22 +209,19 @@ const Filter: React.FC<
 > = observer(props => {
   const navigation = useNavigation();
 
-  const [itemsList, setItemsList] = React.useState(props.items);
   const {apiStore} = useStores();
-
-  React.useEffect(() => {
-    setItemsList(props.items);
-  }, [props.items, setItemsList]);
 
   const onPress = (item: Artist | Book | Genre | Chapter | NoFilter) => {
     props.selectCallback(item);
     navigation.navigate('Filter');
   };
 
-  return apiStore.isLoadingFilterData ? null : (
+  return apiStore.isLoadingFilterData ? (
+    <ActivityIndicator size="small" style={{paddingTop: 20}} />
+  ) : (
     <View>
       <FlatList
-        data={itemsList}
+        data={props.items}
         renderItem={({item, index}) => (
           <TouchableHighlight onPress={() => onPress(item)}>
             <View style={filterStyles.button} key={`picker_${item.id}`}>
@@ -262,7 +241,7 @@ const Filter: React.FC<
 const FilterEntry = observer(() => {
   const navigation = useNavigation();
 
-  const data = ['Redner', 'Kategorie', 'Buch'];
+  const data = ['Redner', 'Kategorie', 'Buch', 'Kapitel'];
   const onPress = d => {
     navigation.navigate(d);
   };
@@ -319,10 +298,6 @@ const styles = StyleSheet.create({
 });
 
 const filterStyles = StyleSheet.create({
-  filterTagsContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
   button: {
     flexDirection: 'row',
     justifyContent: 'space-between',

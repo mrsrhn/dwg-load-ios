@@ -34,7 +34,12 @@ export const AlbumTitlesList = observer(({route}: Props) => {
         <FlatList
           data={albumList.titles}
           renderItem={({item}) => {
-            return <SingleSermonListEntry key={item.id} sermon={item} />;
+            return (
+              <SingleSermonListEntry
+                key={`singleSermonListEntry_${item.id}`}
+                sermon={item}
+              />
+            );
           }}
           onEndReachedThreshold={5}
           onMomentumScrollBegin={() =>

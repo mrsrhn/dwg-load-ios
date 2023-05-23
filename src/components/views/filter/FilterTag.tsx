@@ -1,3 +1,4 @@
+import {observer} from 'mobx-react';
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -5,14 +6,14 @@ import {Appearance} from '../../../appearance';
 import {useStores} from '../../../hooks/useStores';
 import {NOFILTERVALUE} from '../../../stores/filterStore';
 
-type FilterType = 'artist' | 'genre' | 'book';
+type FilterType = 'artist' | 'genre' | 'book' | 'chapter';
 
 interface FilterTagProps {
   title: string;
   type: FilterType;
 }
 
-export const FilterTag: React.FC<FilterTagProps> = ({title, type}) => {
+export const FilterTag: React.FC<FilterTagProps> = observer(({title, type}) => {
   const {filterStore} = useStores();
   const onPress = () => {
     switch (type) {
@@ -24,6 +25,10 @@ export const FilterTag: React.FC<FilterTagProps> = ({title, type}) => {
         break;
       case 'book':
         filterStore.filterViewUpdateFilteredBook(NOFILTERVALUE);
+        filterStore.filterViewUpdateFilteredChapter(NOFILTERVALUE);
+        break;
+      case 'chapter':
+        filterStore.filterViewUpdateFilteredChapter(NOFILTERVALUE);
         break;
     }
   };
@@ -36,7 +41,7 @@ export const FilterTag: React.FC<FilterTagProps> = ({title, type}) => {
       </>
     </TouchableOpacity>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {
