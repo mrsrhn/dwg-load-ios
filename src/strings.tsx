@@ -2,7 +2,7 @@ import LocalizedStrings from 'react-native-localization';
 const languages = {
   de: {
     base: 'https://load.dwgradio.net/de/',
-    paypalUrl: 'https://www.paypal.com/donate/?hosted_button_id=SVB67LZ9JGAME',
+    paypalUrl: 'https://www.paypal.com/donate/?hosted_button_id=CBDECENM9CM8Q',
     url: 'https://load.dwgradio.net/de/api/v1/',
     content: 'Inhalt',
     back: 'Zurück',
