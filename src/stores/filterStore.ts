@@ -143,6 +143,7 @@ export class FilterStore {
         this.filterViewFilteredGenre,
         this.filterViewFilteredBook,
       );
+      this.filterViewFilteredChapter = undefined;
       this.filterViewFilteredArtist =
         artist?.id === 'none' ? undefined : artist;
     },
@@ -155,6 +156,7 @@ export class FilterStore {
         genre,
         this.filterViewFilteredBook,
       );
+      this.filterViewFilteredChapter = undefined;
       this.filterViewFilteredGenre = genre?.id === 'none' ? undefined : genre;
     },
   );
