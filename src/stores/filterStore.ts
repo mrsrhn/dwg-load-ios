@@ -165,6 +165,7 @@ export class FilterStore {
       this.filterViewFilteredGenre,
       book,
     );
+    this.filterViewFilteredChapter = undefined;
     this.filterViewFilteredBook = book?.id === 'none' ? undefined : book;
   });
 

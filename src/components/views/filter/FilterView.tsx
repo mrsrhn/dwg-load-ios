@@ -21,14 +21,11 @@ import {DWGButton} from '../../DWGButton';
 import {strings} from '../../../strings';
 import {useStores} from '../../../hooks/useStores';
 import {createStackNavigator} from '@react-navigation/stack';
-
 import {
-  ScrollView,
   TouchableHighlight,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
-import {FilterTag} from './FilterTag';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {FilterTagsBar} from './FilterTagsBar';
 
@@ -130,7 +127,7 @@ export const FilterView: React.FC<FilterViewProps> = observer(() => {
           />
           <Stack.Screen
             options={{headerBackTitle: strings.filter}}
-            name="Buch"
+            name="Biblisches Buch"
             component={FilterBook}
           />
           <Stack.Screen
@@ -160,8 +157,8 @@ const FilterBook = observer(() => {
   const {filterStore} = useStores();
   return (
     <Filter
+      navigateTo="Kapitel"
       selectCallback={filterStore.filterViewUpdateFilteredBook}
-      title={strings.bible}
       items={filterStore.books}
     />
   );
@@ -170,8 +167,9 @@ const FilterChapter = observer(() => {
   const {filterStore} = useStores();
   return (
     <Filter
+      pickerPrefix="Kapitel"
+      navigateTo="Filter"
       selectCallback={filterStore.filterViewUpdateFilteredChapter}
-      title={strings.chapter}
       items={filterStore.chapters}
     />
   );
@@ -180,8 +178,8 @@ const FilterArtist = observer(() => {
   const {filterStore} = useStores();
   return (
     <Filter
+      navigateTo="Filter"
       selectCallback={filterStore.filterViewUpdateFilteredArtist}
-      title={strings.speaker}
       items={filterStore.artists}
     />
   );
@@ -190,15 +188,15 @@ const FilterCategory = observer(() => {
   const {filterStore} = useStores();
   return (
     <Filter
+      navigateTo="Filter"
       selectCallback={filterStore.filterViewUpdateFilteredGenre}
-      title={strings.category}
       items={filterStore.genres}
     />
   );
 });
 interface FilterProps<Item> {
+  navigateTo: string;
   items: Item[];
-  title: string;
   disabled?: boolean;
   pickerPrefix?: string;
   selectCallback: (value: Item) => void;
@@ -213,7 +211,7 @@ const Filter: React.FC<
 
   const onPress = (item: Artist | Book | Genre | Chapter | NoFilter) => {
     props.selectCallback(item);
-    navigation.navigate('Filter');
+    navigation.navigate(props.navigateTo);
   };
 
   return apiStore.isLoadingFilterData ? (
@@ -227,9 +225,10 @@ const Filter: React.FC<
             <View style={filterStyles.button} key={`picker_${item.id}`}>
               <Text style={filterStyles.title}>{`${
                 props.pickerPrefix && index !== 0 ? props.pickerPrefix : ''
-              } ${item.name} ${
-                item.numTitles !== 0 ? `(${item.numTitles})` : ''
-              }`}</Text>
+              } ${item.name}`}</Text>
+              <Text style={filterStyles.count}>
+                {item.numTitles !== 0 ? item.numTitles : ''}
+              </Text>
             </View>
           </TouchableHighlight>
         )}
@@ -241,7 +240,7 @@ const Filter: React.FC<
 const FilterEntry = observer(() => {
   const navigation = useNavigation();
 
-  const data = ['Redner', 'Kategorie', 'Buch', 'Kapitel'];
+  const data = ['Redner', 'Kategorie', 'Biblisches Buch'];
   const onPress = d => {
     navigation.navigate(d);
   };
@@ -308,4 +307,5 @@ const filterStyles = StyleSheet.create({
     backgroundColor: 'white',
   },
   title: {color: Appearance.darkColor},
+  count: {color: Appearance.greyColor, fontSize: 11},
 });

@@ -63,7 +63,7 @@ export const PlayerInformation: React.FC<PlayerInformationProps> = observer(
           <View style={styles.infoItemsContainer}>
             {infoItems.map(item => (
               <InfoItem
-                key={`infoItem_${item.id}`}
+                key={`infoItem_${item.key}`}
                 text={item.text}
                 icon={item.icon}
               />

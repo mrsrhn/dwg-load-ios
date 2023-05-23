@@ -6,7 +6,7 @@ import {Appearance} from '../../../appearance';
 import {useStores} from '../../../hooks/useStores';
 import {NOFILTERVALUE} from '../../../stores/filterStore';
 
-type FilterType = 'artist' | 'genre' | 'book' | 'chapter';
+type FilterType = 'artist' | 'genre' | 'book';
 
 interface FilterTagProps {
   title: string;
@@ -25,9 +25,6 @@ export const FilterTag: React.FC<FilterTagProps> = observer(({title, type}) => {
         break;
       case 'book':
         filterStore.filterViewUpdateFilteredBook(NOFILTERVALUE);
-        filterStore.filterViewUpdateFilteredChapter(NOFILTERVALUE);
-        break;
-      case 'chapter':
         filterStore.filterViewUpdateFilteredChapter(NOFILTERVALUE);
         break;
     }

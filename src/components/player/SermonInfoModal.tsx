@@ -41,40 +41,48 @@ export const SermonInfoModal: React.FC<SermonInfoModalProps> = observer(
             props.showArtistTitles(props.artist);
           }}
         />
-        {props.genres.length > 0 && (
+        {props.genres.length > 0 ? (
           <View style={styles.textWrapper}>
             <Text style={styles.text}>{strings.category}</Text>
           </View>
+        ) : (
+          <></>
         )}
-        {props.genres.map(genre => (
-          <DWGButton
-            style="secondary"
-            key={`more-from-${genre.id}`}
-            title={genre.name ?? ''}
-            onPress={() => {
-              userSessionStore.setInfoModalVisible(false);
-              if (!props.artist) throw Error('no-artist-defined');
-              props.showGenreTitles(genre);
-            }}
-          />
-        ))}
-        {props.passages.length > 0 && (
-          <View style={styles.textWrapper}>
-            <Text style={styles.text}>{strings.biblePassage}</Text>
-          </View>
-        )}
-        {books.map((book, index) => (
-          <DWGButton
-            style="secondary"
-            key={`more-from-${book}`}
-            title={book}
-            onPress={() => {
-              userSessionStore.setInfoModalVisible(false);
-              if (!props.artist) throw Error('no-artist-defined');
-              props.showBookTitles(props.passages[index].PassageBook);
-            }}
-          />
-        ))}
+        <>
+          {props.genres.map(genre => (
+            <DWGButton
+              style="secondary"
+              key={`more-from-${genre.id}`}
+              title={genre.name ?? ''}
+              onPress={() => {
+                userSessionStore.setInfoModalVisible(false);
+                if (!props.artist) throw Error('no-artist-defined');
+                props.showGenreTitles(genre);
+              }}
+            />
+          ))}
+        </>
+        <>
+          {props.passages.length > 0 && (
+            <View style={styles.textWrapper}>
+              <Text style={styles.text}>{strings.biblePassage}</Text>
+            </View>
+          )}
+        </>
+        <>
+          {books.map((book, index) => (
+            <DWGButton
+              style="secondary"
+              key={`more-from-${book}`}
+              title={book}
+              onPress={() => {
+                userSessionStore.setInfoModalVisible(false);
+                if (!props.artist) throw Error('no-artist-defined');
+                props.showBookTitles(props.passages[index].PassageBook);
+              }}
+            />
+          ))}
+        </>
       </DWGModal>
     );
   },

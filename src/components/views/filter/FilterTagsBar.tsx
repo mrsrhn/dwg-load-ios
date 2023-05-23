@@ -24,13 +24,11 @@ export const FilterTagsBar: React.FC = observer(() => {
         {filterStore.filterViewFilteredBook?.numTitles ? (
           <FilterTag
             type="book"
-            title={filterStore.filterViewFilteredBook.name}
-          />
-        ) : null}
-        {filterStore.filterViewFilteredChapter?.numTitles ? (
-          <FilterTag
-            type="chapter"
-            title={filterStore.filterViewFilteredChapter.name}
+            title={`${filterStore.filterViewFilteredBook.name}${
+              filterStore.filterViewFilteredChapter?.name
+                ? ` ${filterStore.filterViewFilteredChapter.name}`
+                : ''
+            }`}
           />
         ) : null}
       </View>
