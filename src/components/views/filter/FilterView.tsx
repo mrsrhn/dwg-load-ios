@@ -28,6 +28,7 @@ import {
 } from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
 import {FilterTag} from './FilterTag';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Stack = createStackNavigator();
 interface FilterViewProps {}
@@ -150,6 +151,11 @@ export const FilterView: React.FC<FilterViewProps> = observer(() => {
             name="Buch"
             component={FilterBook}
           />
+          <Stack.Screen
+            options={{headerBackTitle: strings.filter}}
+            name="Kapitel"
+            component={FilterChapter}
+          />
         </Stack.Navigator>
         <View style={{flexDirection: 'row'}}>
           <DWGButton
@@ -175,6 +181,16 @@ const FilterBook = () => {
       selectCallback={filterStore.filterViewUpdateFilteredBook}
       title={strings.bible}
       items={filterStore.books}
+    />
+  );
+};
+const FilterChapter = () => {
+  const {filterStore} = useStores();
+  return (
+    <Filter
+      selectCallback={filterStore.filterViewUpdateFilteredChapter}
+      title={strings.chapter}
+      items={filterStore.chapters}
     />
   );
 };
@@ -248,15 +264,7 @@ const FilterEntry = observer(() => {
 
   const data = ['Redner', 'Kategorie', 'Buch'];
   const onPress = d => {
-    if (d === 'Redner') {
-      navigation.navigate('Redner');
-    }
-    if (d === 'Kategorie') {
-      navigation.navigate('Kategorie');
-    }
-    if (d === 'Buch') {
-      navigation.navigate('Buch');
-    }
+    navigation.navigate(d);
   };
 
   return (
@@ -265,9 +273,21 @@ const FilterEntry = observer(() => {
         <FlatList
           data={data}
           renderItem={({item}) => (
-            <TouchableHighlight onPress={() => onPress(item)}>
-              <View style={filterStyles.button} key={`picker_${item}`}>
-                <Text style={filterStyles.title}>{item}</Text>
+            <TouchableHighlight
+              key={`picker_${item}`}
+              onPress={() => onPress(item)}>
+              <View style={filterStyles.button}>
+                <View />
+                <View>
+                  <Text style={filterStyles.title}>{item}</Text>
+                </View>
+                <View>
+                  <Ionicons
+                    size={15}
+                    color={Appearance.baseColor}
+                    name="chevron-forward-outline"
+                  />
+                </View>
               </View>
             </TouchableHighlight>
           )}
@@ -304,14 +324,13 @@ const filterStyles = StyleSheet.create({
     flexDirection: 'row',
   },
   button: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     borderStyle: 'solid',
     borderBottomWidth: 1,
     borderBottomColor: Appearance.greyColor,
     padding: 15,
     backgroundColor: 'white',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
   },
-
   title: {color: Appearance.darkColor},
 });
