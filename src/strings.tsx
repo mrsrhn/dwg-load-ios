@@ -85,6 +85,7 @@ const languages = {
     deleteDownloads: 'Alle Downloads löschen',
     deleteFavorites: 'Alle Favoriten entfernen',
     historyDeleted: 'Historie gelöscht!',
+    downloadDeleted: 'Download gelöscht!',
     downloadsDeleted: 'Downloads gelöscht!',
     favoritesDeleted: 'Favoriten entfernt!',
     delete: 'Löschen',

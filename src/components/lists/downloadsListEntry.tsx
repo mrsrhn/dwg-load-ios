@@ -34,7 +34,7 @@ export const DownloadsListEntry = (props: {sermon: Sermon}) => {
           text: strings.delete,
           onPress: () => {
             storageStore.deleteSermon(props.sermon);
-            Toast.showWithGravity(strings.downloadsDeleted, 2, Toast.BOTTOM);
+            Toast.showWithGravity(strings.downloadDeleted, 2, Toast.BOTTOM);
           },
           style: 'destructive',
         },
