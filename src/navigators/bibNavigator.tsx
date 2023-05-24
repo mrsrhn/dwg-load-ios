@@ -37,7 +37,7 @@ export const BibNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        swipeEnabled: false,
+        swipeEnabled: true,
         tabBarPressColor: Appearance.darkColor,
         tabBarActiveTintColor: Appearance.darkColor,
         tabBarIndicatorStyle: {backgroundColor: Appearance.darkColor},
