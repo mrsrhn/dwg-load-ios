@@ -1,4 +1,4 @@
-import {makeObservable, observable, action, computed} from 'mobx';
+import {makeObservable, observable, action, computed, runInAction} from 'mobx';
 import {RootStore} from './rootStore';
 import {Sermon} from '../types/userSessionStoreTypes';
 import TrackPlayer, {
@@ -134,7 +134,9 @@ export class PlayerStore {
       if (this.sermon) {
         this.root.storageStore.addSermonPosition(this.sermon, this.position);
       }
-      this.sermon = sermon;
+      runInAction(() => {
+        this.sermon = sermon;
+      });
       this.updatePosition(position);
 
       this.initialPosition = position;

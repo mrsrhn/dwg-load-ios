@@ -23,6 +23,9 @@ import {useStores} from '../../hooks/useStores';
 import TrackPlayer from 'react-native-track-player';
 import {trackPlayerOptions} from '../../config/trackPlayerOptions';
 
+TrackPlayer.setupPlayer();
+TrackPlayer.updateOptions(trackPlayerOptions);
+
 export const wait = (timeout: number) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
 };
@@ -91,8 +94,6 @@ export const NewSermonsView = observer(() => {
       }
     }
     async function initialize() {
-      await TrackPlayer.setupPlayer();
-      await TrackPlayer.updateOptions(trackPlayerOptions);
       await Promise.all([
         apiStore.updateAllSermonsTotal(),
         apiStore.updateNewSermonsTotal(),
