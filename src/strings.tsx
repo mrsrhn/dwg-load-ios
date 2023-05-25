@@ -281,5 +281,5 @@ const languages = {
 };
 
 export const strings = new LocalizedStrings({
-  currentLanguage: languages.de,
+  currentLanguage: languages.cz,
 });
