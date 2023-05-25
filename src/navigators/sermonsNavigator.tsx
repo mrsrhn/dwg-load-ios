@@ -71,9 +71,7 @@ export const SermonsNavigator = observer((props: SermonsNavigatorProps) => {
               onPress={() => navigation.navigate('FilterView')}>
               {({pressed}) => (
                 <Ionicons
-                  name={
-                    isFiltered ? 'ios-filter-outline' : 'ios-filter-outline'
-                  }
+                  name="ios-filter"
                   size={20}
                   color={pressed ? Appearance.baseColor : Appearance.darkColor}
                 />
@@ -90,7 +88,7 @@ export const SermonsNavigator = observer((props: SermonsNavigatorProps) => {
               {({pressed}) => (
                 <>
                   <Ionicons
-                    name="swap-vertical-outline"
+                    name="swap-vertical"
                     size={20}
                     color={
                       pressed ? Appearance.baseColor : Appearance.darkColor
