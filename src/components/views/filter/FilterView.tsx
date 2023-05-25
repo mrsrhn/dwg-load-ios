@@ -110,29 +110,29 @@ export const FilterView: React.FC<FilterViewProps> = observer(() => {
           <Stack.Screen
             options={{
               headerBackTitle: strings.back,
-              headerTitle: 'Verfügbare Filter',
+              headerTitle: strings.availableFilter,
             }}
-            name="Filter"
+            name={strings.filter}
             component={FilterEntry}
           />
           <Stack.Screen
             options={{headerBackTitle: strings.filter}}
-            name="Redner"
+            name={strings.speaker}
             component={FilterArtist}
           />
           <Stack.Screen
             options={{headerBackTitle: strings.filter}}
-            name="Kategorie"
+            name={strings.category}
             component={FilterCategory}
           />
           <Stack.Screen
             options={{headerBackTitle: strings.filter}}
-            name="Biblisches Buch"
+            name={strings.bible}
             component={FilterBook}
           />
           <Stack.Screen
             options={{headerBackTitle: strings.filter}}
-            name="Kapitel"
+            name={strings.chapter}
             component={FilterChapter}
           />
         </Stack.Navigator>
@@ -157,7 +157,7 @@ const FilterBook = observer(() => {
   const {filterStore} = useStores();
   return (
     <Filter
-      navigateTo="Kapitel"
+      navigateTo={strings.chapter}
       selectCallback={filterStore.filterViewUpdateFilteredBook}
       items={filterStore.books}
     />
@@ -167,8 +167,8 @@ const FilterChapter = observer(() => {
   const {filterStore} = useStores();
   return (
     <Filter
-      pickerPrefix="Kapitel"
-      navigateTo="Filter"
+      pickerPrefix={strings.chapter}
+      navigateTo={strings.filter}
       selectCallback={filterStore.filterViewUpdateFilteredChapter}
       items={filterStore.chapters}
     />
@@ -178,7 +178,7 @@ const FilterArtist = observer(() => {
   const {filterStore} = useStores();
   return (
     <Filter
-      navigateTo="Filter"
+      navigateTo={strings.filter}
       selectCallback={filterStore.filterViewUpdateFilteredArtist}
       items={filterStore.artists}
     />
@@ -188,7 +188,7 @@ const FilterCategory = observer(() => {
   const {filterStore} = useStores();
   return (
     <Filter
-      navigateTo="Filter"
+      navigateTo={strings.filter}
       selectCallback={filterStore.filterViewUpdateFilteredGenre}
       items={filterStore.genres}
     />
@@ -240,7 +240,7 @@ const Filter: React.FC<
 const FilterEntry = observer(() => {
   const navigation = useNavigation();
 
-  const data = ['Redner', 'Kategorie', 'Biblisches Buch'];
+  const data = [strings.speaker, strings.category, strings.bible];
   const onPress = d => {
     navigation.navigate(d);
   };

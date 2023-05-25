@@ -11,7 +11,7 @@ const languages = {
     collections: 'Sammlungen',
     speaker: 'Redner',
     category: 'Kategorie',
-    bible: 'Bibel',
+    bible: 'Biblisches Buch',
     biblePassage: 'Bibelstelle',
     chapter: 'Kapitel',
     reset: 'Zurücksetzen',
@@ -92,6 +92,7 @@ const languages = {
     deleteQuestion: 'Lokale Datei löschen?',
     info: 'Info',
     showResults: 'Ergebnisse Anzeigen',
+    availableFilter: 'Verfügbare Filter',
   },
   cz: {
     base: 'https://load.dwgradio.net/cz/',
@@ -180,10 +181,11 @@ const languages = {
     historyDeleted: 'Historie smazána',
     downloadsDeleted: 'Stažené soubory smazány',
     favoritesDeleted: 'Oblíbené smazány',
-    delete: 'Löschen',
-    deleteQuestion: 'Lokale Datei löschen?',
-    info: 'Info',
-    showResults: 'Ergebnisse Anzeigen',
+    delete: 'Smazat',
+    deleteQuestion: 'Smazat místní soubor?',
+    info: 'Informace',
+    showResults: 'Zobrazit výsledky',
+    availableFilter: 'Dostupné filtry',
   },
   ru: {
     base: 'https://load.dwgradio.net/ru/',
@@ -273,7 +275,8 @@ const languages = {
     delete: 'Удалить',
     deleteQuestion: 'Удалить локальный файл?',
     info: 'Информация',
-    showResults: 'Ergebnisse Anzeigen',
+    showResults: 'Показать результаты',
+    availableFilter: 'Доступные фильтры',
   },
 };
 
