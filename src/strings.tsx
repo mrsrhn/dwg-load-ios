@@ -96,7 +96,7 @@ const languages = {
   },
   cz: {
     base: 'https://load.dwgradio.net/cz/',
-    paypalUrl: 'https://www.paypal.com/donate/?hosted_button_id=SVB67LZ9JGAME',
+    paypalUrl: 'https://www.paypal.com/donate/?hosted_button_id=GJ2NUC5H46B7S',
     url: 'https://load.dwgradio.net/cz/api/v1/',
     content: 'Obsah',
     back: 'Zpět',
