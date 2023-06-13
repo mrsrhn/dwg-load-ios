@@ -20,14 +20,9 @@ const Stack = createNativeStackNavigator();
 export const SermonsNavigator = observer((props: SermonsNavigatorProps) => {
   const {baseComponentName, baseComponent} = props;
 
-  const {userSessionStore, filterStore} = useStores();
+  const {userSessionStore} = useStores();
 
   const {openSortActions, selectedOption} = useSortActions();
-
-  const isFiltered =
-    filterStore.filteredArtist ||
-    filterStore.filteredGenre ||
-    filterStore.filteredBook;
 
   const defaultViewOptions = (navigation: any) => ({
     headerRight: () =>

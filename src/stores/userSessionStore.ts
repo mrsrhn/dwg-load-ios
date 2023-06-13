@@ -19,7 +19,6 @@ export class UserSessionStore {
   playerModalVisible = false;
   artistModalVisible = false;
   commentModalVisible = false;
-  infoModalVisible = false;
   infoCollectionModalVisible = false;
 
   sleepTimerProgress: number | undefined = undefined;
@@ -40,7 +39,6 @@ export class UserSessionStore {
       playerModalVisible: observable,
       artistModalVisible: observable,
       commentModalVisible: observable,
-      infoModalVisible: observable,
       infoCollectionModalVisible: observable,
       sleepTimerProgress: observable,
       sortParameter: observable,
@@ -68,10 +66,6 @@ export class UserSessionStore {
 
   setArtistModalVisible = action((visible: boolean) => {
     this.artistModalVisible = visible;
-  });
-
-  setInfoModalVisible = action((visible: boolean) => {
-    this.infoModalVisible = visible;
   });
 
   setCommentModalVisible = action((visible: boolean) => {

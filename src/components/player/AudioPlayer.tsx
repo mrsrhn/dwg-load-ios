@@ -9,9 +9,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {ModalHeader} from '../ModalHeader';
 import {ArtistView} from '../views/ArtistView';
 import {Appearance} from '../../appearance';
-import {SermonInfoModal} from './SermonInfoModal';
 import {DWGButton} from '../DWGButton';
-import {Artist, Genre, Book} from '../../types/userSessionStoreTypes';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {CommentView} from '../views/CommentView';
 import {useNetInfo} from '@react-native-community/netinfo';
@@ -19,9 +17,6 @@ import {strings} from '../../strings';
 import {useStores} from '../../hooks/useStores';
 
 interface PlayerProps {
-  showArtistTitles: (artist: Artist) => void;
-  showGenreTitles: (genre: Genre) => void;
-  showBookTitles: (book: Book) => void;
   activateCloseGesture: (isOnTop: boolean) => void;
 }
 
@@ -102,14 +97,6 @@ export const Player: React.FC<PlayerProps> = observer(props => {
     <React.Fragment>
       <ArtistView />
       <CommentView />
-      <SermonInfoModal
-        showArtistTitles={props.showArtistTitles}
-        showGenreTitles={props.showGenreTitles}
-        showBookTitles={props.showBookTitles}
-        artist={selectedSermon.artist}
-        genres={selectedSermon.Genres ?? []}
-        passages={selectedSermon.Passages ?? []}
-      />
       <SafeAreaView
         style={{
           marginTop: 50,
@@ -166,7 +153,6 @@ export const Player: React.FC<PlayerProps> = observer(props => {
           genres={selectedSermon.Genres}
         />
         <PlayerActions
-          sermon={selectedSermon}
           isFavorised={isFavorised}
           isDownloaded={isDownloaded}
           isDownloading={isDownloading}

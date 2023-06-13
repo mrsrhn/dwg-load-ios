@@ -61,18 +61,9 @@ export const PlayerView = observer(() => {
         onRequestClose={() => userSessionStore.setPlayerModalVisible(false)}>
         <View style={styles.container}>
           {userSessionStore.selectedSermonIsVideo ? (
-            <VideoPlayer
-              showArtistTitles={showArtistTitles}
-              showGenreTitles={showGenreTitles}
-              showBookTitles={showBookTitles}
-            />
+            <VideoPlayer />
           ) : (
-            <Player
-              activateCloseGesture={activateCloseGesture}
-              showArtistTitles={artist => showArtistTitles(artist)}
-              showGenreTitles={genre => showGenreTitles(genre)}
-              showBookTitles={book => showBookTitles(book)}
-            />
+            <Player activateCloseGesture={activateCloseGesture} />
           )}
         </View>
       </Modal>
