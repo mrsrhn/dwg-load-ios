@@ -15,19 +15,11 @@ import {ModalHeader} from '../ModalHeader';
 import {ArtistView} from '../views/ArtistView';
 import {Appearance} from '../../appearance';
 import Video, {LoadError} from 'react-native-video';
-import {SermonInfoModal} from './SermonInfoModal';
-import {Artist, Genre, Book} from '../../types/userSessionStoreTypes';
 import Toast from 'react-native-simple-toast';
 import {strings} from '../../strings';
 import {useStores} from '../../hooks/useStores';
 
-interface PlayerProps {
-  showArtistTitles: (artist: Artist) => void;
-  showGenreTitles: (genre: Genre) => void;
-  showBookTitles: (book: Book) => void;
-}
-
-export const VideoPlayer: React.FC<PlayerProps> = observer(props => {
+export const VideoPlayer: React.FC = observer(() => {
   const [isBuffering, setIsBuffering] = useState(false);
   const [initialPosition, setInitialPosition] = useState(0);
   const [paused, setPaused] = useState(true);
@@ -82,14 +74,6 @@ export const VideoPlayer: React.FC<PlayerProps> = observer(props => {
   return (
     <React.Fragment>
       <ArtistView />
-      <SermonInfoModal
-        showArtistTitles={props.showArtistTitles}
-        showGenreTitles={props.showGenreTitles}
-        showBookTitles={props.showBookTitles}
-        artist={selectedSermon.artist}
-        genres={selectedSermon.Genres ?? []}
-        passages={selectedSermon.Passages ?? []}
-      />
       <SafeAreaView style={{margin: 20, minWidth: '95%'}}>
         <ScrollView
           style={{minWidth: '100%'}}
@@ -175,7 +159,6 @@ export const VideoPlayer: React.FC<PlayerProps> = observer(props => {
             genres={selectedSermon.Genres}
           />
           <PlayerActions
-            sermon={selectedSermon}
             isFavorised={isFavorised}
             isDownloaded={isDownloaded}
             isDownloading={isDownloading}

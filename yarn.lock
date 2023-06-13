@@ -1879,6 +1879,11 @@
   "resolved" "https://registry.npmjs.org/@react-native-community/netinfo/-/netinfo-9.3.7.tgz"
   "version" "9.3.7"
 
+"@react-native-menu/menu@^0.8.0":
+  "integrity" "sha512-kxiT6ySZsDbBvNWovrKVAfs4AQvAytKIf0f8KQLkVO6eNYMUmONBQPzi6onTTbVujXtZHambo7qr/PcedaR8Tg=="
+  "resolved" "https://registry.npmjs.org/@react-native-menu/menu/-/menu-0.8.0.tgz"
+  "version" "0.8.0"
+
 "@react-native-picker/picker@^2.4.8":
   "integrity" "sha512-5NQ5XPo1B03YNqKFrV6h9L3CQaHlB80wd4ETHUEABRP2iLh7FHLVObX2GfziD+K/VJb8G4KZcZ23NFBFP1f7bg=="
   "resolved" "https://registry.npmjs.org/@react-native-picker/picker/-/picker-2.4.8.tgz"

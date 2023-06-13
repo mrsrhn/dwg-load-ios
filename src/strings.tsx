@@ -7,7 +7,7 @@ const languages = {
     content: 'Inhalt',
     back: 'Zurück',
     theSearch: 'Suche',
-    otherSermons: 'Weitere Vorträge',
+    otherSermons: 'Weitere Vorträge von/über',
     collections: 'Sammlungen',
     speaker: 'Redner',
     category: 'Kategorie',

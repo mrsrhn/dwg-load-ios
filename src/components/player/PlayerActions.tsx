@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {observer} from 'mobx-react-lite';
 import {
   StyleSheet,
@@ -12,16 +12,17 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Appearance} from '../../appearance';
 import Share, {ShareOptions} from 'react-native-share';
-import {Sermon} from '../../types/userSessionStoreTypes';
 import LottieView from 'lottie-react-native';
 import Toast from 'react-native-simple-toast';
 import {strings} from '../../strings';
 import {useStores} from '../../hooks/useStores';
+import {SimilarSermonsMenu} from './SimilarSermonsMenu';
+
+const TIMER_OPTIONS = [5, 10, 15, 30, 45, 60, 120];
 
 interface PlayerActionsProps {
   isFavorised: boolean;
   isDownloaded: boolean;
-  sermon: Sermon;
   isDownloading: boolean;
   downloadProgress: number | undefined;
   download: () => void;
@@ -37,7 +38,6 @@ export const PlayerActions: React.FC<PlayerActionsProps> = observer(props => {
     isDownloading,
     download,
     stopDownload,
-    sermon,
     downloadProgress,
     deactivateSleepTimer,
   } = props;
@@ -45,12 +45,23 @@ export const PlayerActions: React.FC<PlayerActionsProps> = observer(props => {
   const [downloadStarted, setDownloadStarted] = React.useState(isDownloaded);
   const {userSessionStore, storageStore} = useStores();
 
-  const shareOptions: ShareOptions = {
-    message: `${sermon.artist?.name ?? ''} - ${sermon.title}`,
-    title: sermon.title,
-    subject: `${sermon.artist?.name ?? ''} - ${sermon.title}`,
-    url: `${strings.base}play/${sermon.id}`,
-  };
+  const shareOptions: ShareOptions = useMemo(
+    () => ({
+      message: `${userSessionStore.selectedSermon?.artist?.name ?? ''} - ${
+        userSessionStore.selectedSermon?.title
+      }`,
+      title: userSessionStore.selectedSermon?.title,
+      subject: `${userSessionStore.selectedSermon?.artist?.name ?? ''} - ${
+        userSessionStore.selectedSermon?.title
+      }`,
+      url: `${strings.base}play/${userSessionStore.selectedSermon?.id}`,
+    }),
+    [
+      userSessionStore.selectedSermon?.artist?.name,
+      userSessionStore.selectedSermon?.id,
+      userSessionStore.selectedSermon?.title,
+    ],
+  );
 
   const progress = React.useRef(new Animated.Value(0.19)).current;
 
@@ -103,13 +114,11 @@ export const PlayerActions: React.FC<PlayerActionsProps> = observer(props => {
       });
   };
 
-  const timerOptions = [5, 10, 15, 30, 45, 60, 120];
-
   const onSleepTimer = () => {
     const options = {
       options: [
         strings.off,
-        ...timerOptions.map(time => `${time} ${strings.minutes}`),
+        ...TIMER_OPTIONS.map(time => `${time} ${strings.minutes}`),
       ],
       cancelButtonIndex: 0,
       title: strings.sleepTimer,
@@ -118,29 +127,12 @@ export const PlayerActions: React.FC<PlayerActionsProps> = observer(props => {
       if (buttonIndex === 0) {
         userSessionStore.stopSleepTimer();
       } else if (buttonIndex !== undefined) {
-        userSessionStore.activateSleepTimer(timerOptions[buttonIndex - 1]);
+        userSessionStore.activateSleepTimer(TIMER_OPTIONS[buttonIndex - 1]);
       }
     };
 
     ActionSheetIOS.showActionSheetWithOptions(options, actionSheetCallback);
   };
-
-  const onInfoView = () => {
-    userSessionStore.setInfoModalVisible(true);
-  };
-
-  const DownloadAnimation = () => (
-    <LottieView
-      colorFilters={[
-        {keypath: 'Download_Progress 2', color: Appearance.darkColor},
-        {keypath: 'Download_Progress', color: Appearance.darkColor},
-        {keypath: 'ic_download Outlines', color: Appearance.darkColor},
-      ]}
-      source={require('../../assets/download.json')}
-      loop={false}
-      progress={isDownloaded ? 1 : progress}
-    />
-  );
 
   const generateTimeString = (seconds: number) => {
     let minutesInt = Math.floor(seconds / 60);
@@ -161,13 +153,16 @@ export const PlayerActions: React.FC<PlayerActionsProps> = observer(props => {
   };
 
   const toggleFavorite = () => {
+    if (!userSessionStore.selectedSermon) return;
     if (isFavorised) {
       Toast.showWithGravity(strings.removedSaved, 2, Toast.BOTTOM);
 
-      storageStore.removeFavorisedSermon(sermon);
+      storageStore.removeFavorisedSermon(userSessionStore.selectedSermon);
     } else {
       Toast.showWithGravity(strings.saved, 2, Toast.BOTTOM);
-      storageStore.addSermonToFavorisedSermonsList(sermon);
+      storageStore.addSermonToFavorisedSermonsList(
+        userSessionStore.selectedSermon,
+      );
     }
   };
 
@@ -193,12 +188,14 @@ export const PlayerActions: React.FC<PlayerActionsProps> = observer(props => {
               />
             ) : (
               <View style={{width: 27, height: 27}}>
-                <DownloadAnimation />
+                <DownloadAnimation
+                  progress={progress}
+                  isDownloaded={isDownloaded}
+                />
               </View>
             )
           }
         </Pressable>
-
         <Pressable style={styles.button} onPress={toggleFavorite}>
           {({pressed}) => (
             <Ionicons
@@ -236,14 +233,8 @@ export const PlayerActions: React.FC<PlayerActionsProps> = observer(props => {
             )}
           </Pressable>
         )}
-        <Pressable style={styles.button} onPress={onInfoView}>
-          {({pressed}) => (
-            <Ionicons
-              name={'ellipsis-horizontal-circle-outline'}
-              size={33}
-              color={pressed ? Appearance.baseColor : Appearance.darkColor}
-            />
-          )}
+        <Pressable style={styles.button}>
+          <SimilarSermonsMenu />
         </Pressable>
         <Pressable style={styles.button} onPress={onShare}>
           {({pressed}) => (
@@ -278,3 +269,21 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
 });
+
+interface DownloadAnimationProps {
+  isDownloaded: boolean;
+  progress: Animated.Value;
+}
+
+const DownloadAnimation: React.FC<DownloadAnimationProps> = props => (
+  <LottieView
+    colorFilters={[
+      {keypath: 'Download_Progress 2', color: Appearance.darkColor},
+      {keypath: 'Download_Progress', color: Appearance.darkColor},
+      {keypath: 'ic_download Outlines', color: Appearance.darkColor},
+    ]}
+    source={require('../../assets/download.json')}
+    loop={false}
+    progress={props.isDownloaded ? 1 : props.progress}
+  />
+);
