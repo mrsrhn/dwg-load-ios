@@ -93,6 +93,7 @@ const languages = {
     info: 'Info',
     showResults: 'Ergebnisse Anzeigen',
     availableFilter: 'Verfügbare Filter',
+    speed: 'Geschwindigkeit',
   },
   cz: {
     base: 'https://load.dwgradio.net/cz/',
@@ -186,6 +187,7 @@ const languages = {
     info: 'Informace',
     showResults: 'Zobrazit výsledky',
     availableFilter: 'Dostupné filtry',
+    speed: 'Rychlost',
   },
   ru: {
     base: 'https://load.dwgradio.net/ru/',
@@ -277,6 +279,7 @@ const languages = {
     info: 'Информация',
     showResults: 'Показать результаты',
     availableFilter: 'Доступные фильтры',
+    speed: 'скорость',
   },
 };
 
