@@ -16,6 +16,7 @@ export class PlayerStore {
   paused: boolean = true;
   isBuffering: boolean = false;
   position: number = 0;
+  playbackSpeed: number = 1;
 
   constructor(root: RootStore) {
     this.root = root;
@@ -28,18 +29,13 @@ export class PlayerStore {
       isBuffering: observable,
       position: observable,
       isVideo: computed,
+      playbackSpeed: observable,
     });
 
     this.registerEvents();
   }
 
   private onProgress = (progress: PlaybackProgressUpdatedEvent) => {
-    console.log(
-      'current position:',
-      progress.position,
-      ' of ',
-      this.sermon?.playtime,
-    );
     if (progress.position === 0) return;
     this.updatePosition(progress.position);
   };
@@ -101,6 +97,13 @@ export class PlayerStore {
     this.updatePaused(true);
     this.isBuffering = false;
     this.position = 0;
+  });
+
+  setPlaybackSpeed = action(async (speed: number) => {
+    runInAction(() => {
+      this.playbackSpeed = speed;
+    });
+    await TrackPlayer.setRate(speed);
   });
 
   seek = action(async (value: number) => {

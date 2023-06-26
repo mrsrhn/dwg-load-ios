@@ -12,6 +12,7 @@ import SearchBar from 'react-native-search-bar';
 import {ListInfo} from '../ListInfo';
 import {strings} from '../../strings';
 import {useStores} from '../../hooks/useStores';
+import {Appearance} from '../../appearance';
 
 export const SearchView = observer(() => {
   const {userSessionStore, apiStore} = useStores();
@@ -38,7 +39,11 @@ export const SearchView = observer(() => {
         placeholder={searchString || strings.enterSearchString}
         onChangeText={text => setSearchString(text)}
         onSearchButtonPress={text => onSearch(text)}
+        textFieldBackgroundColor="white"
         textColor="black"
+        searchBarStyle="prominent"
+        barTintColor="white"
+        tintColor={Appearance.darkColor}
       />
       <View style={styles.container}>
         <FlatList

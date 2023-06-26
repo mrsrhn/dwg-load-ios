@@ -17,6 +17,7 @@ import Toast from 'react-native-simple-toast';
 import {strings} from '../../strings';
 import {useStores} from '../../hooks/useStores';
 import {SimilarSermonsMenu} from './SimilarSermonsMenu';
+import {PlaybackSpeedAction} from './playerActions/PlaybackSpeedAction';
 
 const TIMER_OPTIONS = [5, 10, 15, 30, 45, 60, 120];
 
@@ -222,17 +223,16 @@ export const PlayerActions: React.FC<PlayerActionsProps> = observer(props => {
                   size={33}
                   color={pressed ? Appearance.baseColor : Appearance.darkColor}
                 />
-                {
-                  <Text style={styles.timerText}>
-                    {userSessionStore.sleepTimerProgress
-                      ? generateTimeString(userSessionStore.sleepTimerProgress)
-                      : ''}
-                  </Text>
-                }
+                <Text style={styles.timerText}>
+                  {userSessionStore.sleepTimerProgress
+                    ? generateTimeString(userSessionStore.sleepTimerProgress)
+                    : ''}
+                </Text>
               </View>
             )}
           </Pressable>
         )}
+        <PlaybackSpeedAction />
         <Pressable style={styles.button}>
           <SimilarSermonsMenu />
         </Pressable>
@@ -267,6 +267,13 @@ const styles = StyleSheet.create({
   timerText: {
     color: Appearance.greyColor,
     fontSize: 11,
+  },
+  playbackSpeedText: {
+    color: Appearance.greyColor,
+    fontSize: 11,
+    textAlign: 'center',
+
+    width: '100%',
   },
 });
 
