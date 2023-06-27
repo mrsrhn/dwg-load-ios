@@ -6,7 +6,7 @@ import {Appearance} from '../../../appearance';
 import {useStores} from '../../../hooks/useStores';
 import {strings} from '../../../strings';
 
-const PLAYBACK_SPEED_OPTIONS = [strings.cancel, 1, 1.25, 1.5, 1.75, 2, 3];
+const PLAYBACK_SPEED_OPTIONS = [strings.cancel, 1, 1.25, 1.5, 1.75, 2];
 export const PlaybackSpeedAction = observer(() => {
   const {playerStore} = useStores();
 
