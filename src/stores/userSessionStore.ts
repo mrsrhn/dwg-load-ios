@@ -90,6 +90,8 @@ export class UserSessionStore {
     const timerCallback = () => {
       if (this.sleepTimerProgress === 0 || !this.sleepTimerProgress) {
         this.setSleepTimer(undefined);
+        clearInterval(this.sleepTimerInterval as NodeJS.Timeout);
+        this.root.playerStore.updatePaused(true);
       } else {
         this.setSleepTimer(this.sleepTimerProgress - 1);
       }
