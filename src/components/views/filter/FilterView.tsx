@@ -44,7 +44,7 @@ export const FilterView: React.FC<FilterViewProps> = observer(() => {
     filterStore.filterViewUpdateFilteredChapter(undefined);
 
     apply();
-    navigation.navigate('Alle');
+    navigation.navigate(strings.all);
   };
 
   const apply = React.useCallback(async () => {
@@ -79,7 +79,7 @@ export const FilterView: React.FC<FilterViewProps> = observer(() => {
       <View style={styles.modalBackground}>
         <TouchableWithoutFeedback
           style={{height: '100%'}}
-          onPress={() => navigation.navigate('Alle')}
+          onPress={() => navigation.navigate(strings.all)}
         />
       </View>
       <View style={styles.modalContent}>
@@ -145,7 +145,7 @@ export const FilterView: React.FC<FilterViewProps> = observer(() => {
           <DWGButton
             style="primary"
             title={strings.apply}
-            onPress={() => navigation.navigate('Alle')}
+            onPress={() => navigation.navigate(strings.all)}
           />
         </View>
       </View>
