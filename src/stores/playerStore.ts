@@ -195,6 +195,10 @@ export class PlayerStore {
       this.seek(this.position - 10),
     );
     TrackPlayer.addEventListener(Event.RemoteSeek, e => this.seek(e.position));
+    TrackPlayer.addEventListener(Event.RemoteDuck, e => {
+      if (e.paused) return;
+      TrackPlayer.play();
+    });
   };
 
   get isVideo(): boolean | undefined {

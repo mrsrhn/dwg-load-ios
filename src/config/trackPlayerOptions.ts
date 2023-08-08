@@ -1,4 +1,10 @@
-import {Capability, MetadataOptions} from 'react-native-track-player';
+import {
+  Capability,
+  IOSCategory,
+  IOSCategoryMode,
+  IOSCategoryOptions,
+  MetadataOptions,
+} from 'react-native-track-player';
 
 export const trackPlayerOptions: MetadataOptions = {
   forwardJumpInterval: 10,
@@ -10,5 +16,15 @@ export const trackPlayerOptions: MetadataOptions = {
     Capability.JumpBackward,
     Capability.JumpForward,
     Capability.SeekTo,
+  ],
+};
+
+export const setupOptions = {
+  iosCategory: IOSCategory.Playback,
+  iosCategoryMode: IOSCategoryMode.SpokenAudio,
+  iosCategoryOptions: [
+    IOSCategoryOptions.AllowAirPlay,
+    IOSCategoryOptions.AllowBluetooth,
+    IOSCategoryOptions.AllowBluetoothA2DP,
   ],
 };
