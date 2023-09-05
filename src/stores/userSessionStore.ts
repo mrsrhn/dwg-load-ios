@@ -48,6 +48,8 @@ export class UserSessionStore {
       selectedSermonIsDownloaded: computed,
       selectedSermonIsDownloading: computed,
       selectedSermonDownloadingObject: computed,
+      selectedSermonIsCurrentlyPlaying: computed,
+      selectedSermonAlbumInfo: computed,
     });
   }
 
@@ -186,6 +188,15 @@ export class UserSessionStore {
 
   get selectedSermonDownloadProgress() {
     return this.selectedSermonDownloadingObject?.progress;
+  }
+
+  get selectedSermonIsCurrentlyPlaying() {
+    return this.root.playerStore.sermon?.id === this.selectedSermon?.id;
+  }
+
+  get selectedSermonAlbumInfo() {
+    if (!this.selectedSermon?.isPartOfAlbum) return;
+    return `${this.selectedSermon.album.name} ${this.selectedSermon.track}/${this.selectedSermon.album.numTitles}`;
   }
 
   mapTitles = (apiTitles: ApiSermon[]): Sermon[] => {

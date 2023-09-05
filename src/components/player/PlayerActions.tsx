@@ -10,10 +10,7 @@ import {FavoriseAction} from './playerActions/FavoriseAction';
 import {DownloadAction} from './playerActions/DownloadAction';
 
 interface PlayerActionsProps {
-  download: () => void;
-  stopDownload: () => void;
-  pause: () => void;
-  forVideo: boolean | undefined;
+  forVideo: boolean;
 }
 
 export const PlayerActions: React.FC<PlayerActionsProps> = observer(props => {

@@ -4,6 +4,7 @@ import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import {StyleSheet, Text, View} from 'react-native';
 import {Appearance} from '../../appearance';
 import {useProgress} from 'react-native-track-player';
+
 export interface SliderProps {
   enabled: boolean;
   duration: number;
@@ -22,13 +23,8 @@ const formatDurationString = (duration: number, negative = false) => {
 };
 
 const CustomLabel = (props: any) => (
-  <Text
-    style={{
-      textAlign: 'center',
-      color: props.oneMarkerPressed ? Appearance.greyColor : 'white',
-      maxWidth: '100%',
-    }}>
-    {props.content}
+  <Text style={styles.label}>
+    {props.oneMarkerPressed ? props.content : ' '}
   </Text>
 );
 
@@ -39,6 +35,7 @@ export const ProgressSlider = observer((props: SliderProps) => {
   const currentPosition = props.enabled
     ? progress.position
     : props.initialProgress ?? 0;
+
   return (
     <View style={styles.container}>
       <MultiSlider
@@ -51,9 +48,9 @@ export const ProgressSlider = observer((props: SliderProps) => {
         customLabel={p => {
           return typeof p.oneMarkerValue === 'number' ? (
             <CustomLabel
-              {...p}
               duration={duration}
               content={formatDurationString(p.oneMarkerValue)}
+              {...p}
             />
           ) : null;
         }}
@@ -83,5 +80,10 @@ const styles = StyleSheet.create({
   },
   indicatorText: {
     color: 'grey',
+  },
+  label: {
+    textAlign: 'center',
+    color: Appearance.greyColor,
+    maxWidth: '100%',
   },
 });
