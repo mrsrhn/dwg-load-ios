@@ -1,12 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {observer} from 'mobx-react-lite';
-import {
-  Text,
-  StyleSheet,
-  ScrollView,
-  View,
-  NativeScrollEvent,
-} from 'react-native';
+import {Text, StyleSheet, View} from 'react-native';
 import {ProgressSlider} from './ProgressSlider';
 import {PlayerControls} from './PlayerControls';
 import {PlayerActions} from './PlayerActions';
@@ -15,11 +9,10 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {ModalHeader} from '../ModalHeader';
 import {ArtistTitle} from '../views/ArtistTitle';
 import {Appearance} from '../../appearance';
-import {DWGButton} from '../DWGButton';
 import {CommentIcon} from '../views/CommentIcon';
 import {useNetInfo} from '@react-native-community/netinfo';
-import {strings} from '../../strings';
 import {useStores} from '../../hooks/useStores';
+import {AlbumTitles} from './AlbumTitles';
 
 interface PlayerProps {
   activateCloseGesture: (isOnTop: boolean) => void;
@@ -70,12 +63,6 @@ export const Player: React.FC<PlayerProps> = observer(props => {
     }
   };
 
-  const pause = () => {
-    if (selectedSermonIsCurrentlyPlaying) {
-      updatePaused(!paused);
-    }
-  };
-
   return (
     <React.Fragment>
       <SafeAreaView style={styles.container}>
@@ -123,50 +110,11 @@ export const Player: React.FC<PlayerProps> = observer(props => {
             !userSessionStore.selectedSermonIsDownloaded
           }
         />
-        {userSessionStore.selectedSermonAlbumTitles?.length &&
-          userSessionStore.selectedSermonAlbumTitles?.length > 1 && (
-            <ScrollView
-              onScrollBeginDrag={({nativeEvent}) =>
-                props.activateCloseGesture(isCloseToTop(nativeEvent))
-              }
-              onScrollEndDrag={() => props.activateCloseGesture(true)}
-              style={styles.scrollView}
-              showsVerticalScrollIndicator={false}>
-              {userSessionStore.selectedSermonAlbumTitles.length > 1 ? (
-                <React.Fragment>
-                  {userSessionStore.selectedSermonAlbumTitles.map(title => (
-                    <DWGButton
-                      icon={
-                        title.id === playerStore.sermon?.id
-                          ? 'volume-medium-outline'
-                          : undefined
-                      }
-                      style="secondary"
-                      key={`${selectedSermon.id}_${title.id}_button`}
-                      selected={title.id === selectedSermon.id}
-                      onPress={() => {
-                        userSessionStore.setSelectedSermon(title);
-                      }}
-                      title={`${strings.part} ${title.track}: ${title.title}`}
-                      subtitle={
-                        title.Passages?.length
-                          ? `${title.Passages[0].PassageBook.long} ${title.Passages[0].chapter}`
-                          : undefined
-                      }
-                    />
-                  ))}
-                </React.Fragment>
-              ) : null}
-            </ScrollView>
-          )}
+        <AlbumTitles activateCloseGesture={props.activateCloseGesture} />
       </SafeAreaView>
     </React.Fragment>
   );
 });
-
-const isCloseToTop = ({contentOffset}: NativeScrollEvent) => {
-  return contentOffset.y <= 0;
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -191,11 +139,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: Appearance.baseColor,
     fontSize: 14,
-  },
-  scrollView: {
-    minWidth: '100%',
-    borderTopColor: Appearance.baseColor,
-    borderTopWidth: 1,
-    marginTop: 10,
   },
 });
