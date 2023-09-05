@@ -159,14 +159,11 @@ export const VideoPlayer: React.FC = observer(() => {
             genres={selectedSermon.Genres}
           />
           <PlayerActions
-            isFavorised={isFavorised}
-            isDownloaded={isDownloaded}
-            isDownloading={isDownloading}
             downloadProgress={downloadProgress}
             stopDownload={() => storageStore.stopDownladSermon(selectedSermon)}
             download={() => storageStore.downloadSermon(selectedSermon)}
             pause={() => {}}
-            deactivateSleepTimer={true}
+            forVideo={true}
           />
         </ScrollView>
       </SafeAreaView>

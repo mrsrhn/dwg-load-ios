@@ -5,7 +5,7 @@ import {Artist, Book, Genre} from '../../types/userSessionStoreTypes';
 import {useStores} from '../../hooks/useStores';
 import * as RootNavigation from '../../RootNavigation';
 import {strings} from '../../strings';
-import {Platform} from 'react-native';
+import {Platform, Pressable, StyleSheet} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export const SimilarSermonsMenu = () => {
@@ -41,63 +41,73 @@ export const SimilarSermonsMenu = () => {
   };
 
   return (
-    <MenuView
-      title={strings.otherSermons}
-      onPressAction={({nativeEvent}) => {
-        const splittedId = nativeEvent.event.split('-');
-        const type = splittedId[0];
-        const id = splittedId[1];
-        switch (type) {
-          case 'artist':
-            if (!userSessionStore.selectedSermon?.artist) return;
-            showArtistTitles(userSessionStore.selectedSermon.artist);
-            break;
-          case 'genre':
-            const genre = userSessionStore.selectedSermon?.Genres?.find(
-              g => g.id === id,
-            );
-            if (!genre) return;
-            showGenreTitles(genre);
-            break;
-          case 'passage':
-            const book = userSessionStore.selectedSermon?.Passages?.find(
-              p => p.id === id,
-            )?.PassageBook;
-            if (!book) return;
-            showBookTitles(book);
-            break;
-          default:
-            return;
-        }
-      }}
-      actions={[
-        {
-          id: `artist-${userSessionStore.selectedSermon?.artist?.id}`,
-          title: userSessionStore.selectedSermon?.artist?.name ?? '',
-          image: Platform.select({
-            ios: 'person',
-          }),
-        },
-        ...(userSessionStore.selectedSermon?.Genres ?? []).map(genre => ({
-          id: `genre-${genre.id}`,
-          title: genre.name,
-          image: Platform.select({
-            ios: 'tag',
-          }),
-        })),
-        ...(userSessionStore.selectedSermon?.Passages ?? []).map(passage => ({
-          id: `passage-${passage.id}`,
-          title: passage.PassageBook.long,
-          image: Platform.select({
-            ios: 'book',
-          }),
-        })),
-      ]}>
-      <Ionicons
-        name={'ellipsis-horizontal-circle-outline'}
-        size={33}
-        color={Appearance.darkColor}
-      />
-    </MenuView>
+    <Pressable style={styles.button}>
+      <MenuView
+        title={strings.otherSermons}
+        onPressAction={({nativeEvent}) => {
+          const splittedId = nativeEvent.event.split('-');
+          const type = splittedId[0];
+          const id = splittedId[1];
+          switch (type) {
+            case 'artist':
+              if (!userSessionStore.selectedSermon?.artist) return;
+              showArtistTitles(userSessionStore.selectedSermon.artist);
+              break;
+            case 'genre':
+              const genre = userSessionStore.selectedSermon?.Genres?.find(
+                g => g.id === id,
+              );
+              if (!genre) return;
+              showGenreTitles(genre);
+              break;
+            case 'passage':
+              const book = userSessionStore.selectedSermon?.Passages?.find(
+                p => p.id === id,
+              )?.PassageBook;
+              if (!book) return;
+              showBookTitles(book);
+              break;
+            default:
+              return;
+          }
+        }}
+        actions={[
+          {
+            id: `artist-${userSessionStore.selectedSermon?.artist?.id}`,
+            title: userSessionStore.selectedSermon?.artist?.name ?? '',
+            image: Platform.select({
+              ios: 'person',
+            }),
+          },
+          ...(userSessionStore.selectedSermon?.Genres ?? []).map(genre => ({
+            id: `genre-${genre.id}`,
+            title: genre.name,
+            image: Platform.select({
+              ios: 'tag',
+            }),
+          })),
+          ...(userSessionStore.selectedSermon?.Passages ?? []).map(passage => ({
+            id: `passage-${passage.id}`,
+            title: passage.PassageBook.long,
+            image: Platform.select({
+              ios: 'book',
+            }),
+          })),
+        ]}>
+        <Ionicons
+          name={'ellipsis-horizontal-circle-outline'}
+          size={33}
+          color={Appearance.darkColor}
+        />
+      </MenuView>
+    </Pressable>
   );
 };
+
+const styles = StyleSheet.create({
+  button: {
+    padding: 10,
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+});

@@ -75,22 +75,6 @@ export const Player: React.FC<PlayerProps> = observer(props => {
     userSessionStore.setArtistModalVisible(true);
   };
 
-  const downloadingObject = storageStore.currentlyDownloading.find(
-    item => item.id === selectedSermon.id,
-  );
-  const isDownloading = downloadingObject !== undefined;
-  const downloadProgress = !downloadingObject
-    ? undefined
-    : downloadingObject.progress;
-  const isDownloaded =
-    storageStore.sermonsDownloaded.findIndex(
-      sermon => sermon.id === selectedSermon.id,
-    ) >= 0;
-
-  const isFavorised =
-    storageStore.sermonsFavorised.findIndex(
-      item => item.sermon.id === selectedSermon.id,
-    ) >= 0;
   const isCurrentlyPlaying = playerStore.sermon?.id === selectedSermon.id;
 
   return (
@@ -153,14 +137,10 @@ export const Player: React.FC<PlayerProps> = observer(props => {
           genres={selectedSermon.Genres}
         />
         <PlayerActions
-          isFavorised={isFavorised}
-          isDownloaded={isDownloaded}
-          isDownloading={isDownloading}
-          downloadProgress={downloadProgress}
           download={() => storageStore.downloadSermon(selectedSermon)}
           stopDownload={() => storageStore.stopDownladSermon(selectedSermon)}
           pause={pause}
-          deactivateSleepTimer={false}
+          forVideo={false}
         />
         <ProgressSlider
           enabled={isCurrentlyPlaying}
@@ -182,7 +162,10 @@ export const Player: React.FC<PlayerProps> = observer(props => {
               ? seek(currentTime - 10)
               : setInitialPosition(initialPosition - 10)
           }
-          isDeactivated={!netInfo.isInternetReachable && !isDownloaded}
+          isDeactivated={
+            !netInfo.isInternetReachable &&
+            !userSessionStore.selectedSermonIsDownloaded
+          }
         />
         <ScrollView
           onScrollBeginDrag={({nativeEvent}) =>

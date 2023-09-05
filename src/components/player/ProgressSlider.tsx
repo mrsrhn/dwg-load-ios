@@ -3,7 +3,6 @@ import {observer} from 'mobx-react-lite';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import {StyleSheet, Text, View} from 'react-native';
 import {Appearance} from '../../appearance';
-import {useStores} from '../../hooks/useStores';
 import {useProgress} from 'react-native-track-player';
 export interface SliderProps {
   enabled: boolean;
@@ -35,8 +34,6 @@ const CustomLabel = (props: any) => (
 
 export const ProgressSlider = observer((props: SliderProps) => {
   const {duration} = props;
-  const {playerStore} = useStores();
-
   const progress = useProgress();
 
   const currentPosition = props.enabled
