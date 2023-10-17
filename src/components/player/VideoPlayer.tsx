@@ -12,7 +12,7 @@ import {PlayerActions} from './PlayerActions';
 import {PlayerInformation} from './PlayerInformation';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ModalHeader} from '../ModalHeader';
-import {ArtistView} from '../views/ArtistView';
+import {ArtistTitle} from '../views/ArtistTitle';
 import {Appearance} from '../../appearance';
 import Video, {LoadError} from 'react-native-video';
 import Toast from 'react-native-simple-toast';
@@ -73,7 +73,7 @@ export const VideoPlayer: React.FC = observer(() => {
   };
   return (
     <React.Fragment>
-      <ArtistView />
+      <ArtistTitle />
       <SafeAreaView style={{margin: 20, minWidth: '95%'}}>
         <ScrollView
           style={{minWidth: '100%'}}
@@ -152,21 +152,12 @@ export const VideoPlayer: React.FC = observer(() => {
                 }>{`${selectedSermon.album.name} ${selectedSermon.track}/${selectedSermon.album.numTitles}`}</Text>
             )}
           </View>
-          <PlayerInformation
-            date={selectedSermon.date}
-            year={selectedSermon.year}
-            passages={selectedSermon.Passages}
-            genres={selectedSermon.Genres}
-          />
+          <PlayerInformation />
           <PlayerActions
-            isFavorised={isFavorised}
-            isDownloaded={isDownloaded}
-            isDownloading={isDownloading}
-            downloadProgress={downloadProgress}
             stopDownload={() => storageStore.stopDownladSermon(selectedSermon)}
             download={() => storageStore.downloadSermon(selectedSermon)}
             pause={() => {}}
-            deactivateSleepTimer={true}
+            forVideo={true}
           />
         </ScrollView>
       </SafeAreaView>

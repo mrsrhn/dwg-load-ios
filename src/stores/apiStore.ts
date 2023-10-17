@@ -164,7 +164,12 @@ export class ApiStore {
       const titles = await this.fetchNewSermons(this.newSermonsLoadedPages + 1);
       runInAction(() => {
         this.newSermonsLoadedPages = this.newSermonsLoadedPages + 1;
-        this.newSermons = this.newSermons.concat(titles);
+        this.newSermons = this.newSermons.concat(
+          titles.filter(
+            // This filter is needed because we sometimes have duplicates on 2. page - api error
+            title => !this.newSermons.some(sermon => sermon.id === title.id),
+          ),
+        );
       });
     }
     runInAction(() => (this.isLoadingNewSermons = false));
@@ -229,8 +234,10 @@ export class ApiStore {
     this.allSermonsSearchUrl = `${this.baseURL}${Endpoints.title}?${parameterString}s=${this.root.userSessionStore.sortParameter}&`;
   });
 
-  updateAllSermons = action(async () => {
-    runInAction(() => (this.isLoadingAllSermons = true));
+  updateAllSermons = action(async (paging = false) => {
+    if (!paging) {
+      runInAction(() => (this.isLoadingAllSermons = true));
+    }
 
     if (
       this.allSermonsTotal !== undefined &&
@@ -242,7 +249,9 @@ export class ApiStore {
         this.allSermons = this.allSermons.concat(titles);
       });
     }
-    runInAction(() => (this.isLoadingAllSermons = false));
+    if (!paging) {
+      runInAction(() => (this.isLoadingAllSermons = false));
+    }
   });
 
   updateSearchedSermons = action(
