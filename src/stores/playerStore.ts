@@ -6,8 +6,8 @@ import TrackPlayer, {
   Event,
   PlaybackProgressUpdatedEvent,
 } from 'react-native-track-player';
+import {setupOptions, trackPlayerOptions} from '../config/trackPlayerOptions';
 
-// The player is ready to be used
 export class PlayerStore {
   root: RootStore;
   sermon: Sermon | undefined = undefined;
@@ -32,6 +32,8 @@ export class PlayerStore {
       playbackSpeed: observable,
     });
 
+    TrackPlayer.setupPlayer(setupOptions);
+    TrackPlayer.updateOptions(trackPlayerOptions);
     this.registerEvents();
   }
 
@@ -41,7 +43,6 @@ export class PlayerStore {
   };
 
   private onEnd = async () => {
-    console.log('end');
     if (!this.sermon) {
       throw Error('this.sermon-undefined');
     }
@@ -59,7 +60,7 @@ export class PlayerStore {
       return;
     }
 
-    // is last title orf album - break
+    // is last title of album - break
     if (
       parseInt(this.sermon.track, 10) ===
       this.root.userSessionStore.selectedSermonAlbumTitles.length
@@ -72,6 +73,7 @@ export class PlayerStore {
       this.root.userSessionStore.selectedSermonAlbumTitles[
         parseInt(this.sermon.track, 10)
       ];
+
     // play next title of album
     const viewShouldBeUpdated =
       this.root.userSessionStore.selectedSermon?.id === this.sermon.id;
@@ -195,9 +197,13 @@ export class PlayerStore {
       this.seek(this.position - 10),
     );
     TrackPlayer.addEventListener(Event.RemoteSeek, e => this.seek(e.position));
+    TrackPlayer.addEventListener(Event.RemoteDuck, e => {
+      if (e.paused) return;
+      TrackPlayer.play();
+    });
   };
 
   get isVideo(): boolean | undefined {
-    return this.url?.substr(this.url.length - 3, 3) === 'mp4';
+    return this.url?.slice(this.url?.length - 3) === 'mp4';
   }
 }

@@ -88,7 +88,7 @@ export const AllSermonsView = observer(() => {
             renderItem={({item}) => {
               return item.groupalbum ? (
                 <AlbumListEntry
-                  key={`album-list-entry_${item.id}_${item.artistId}`}
+                  key={`all_album-list-entry_${item.id}_${item.artistId}`}
                   album={item.album}
                   artist={item.artist?.name}
                   genre={
@@ -99,7 +99,7 @@ export const AllSermonsView = observer(() => {
                 />
               ) : (
                 <SingleSermonListEntry
-                  key={`sermon-list-entry_${item.id}_${item.artistId}`}
+                  key={`all_sermon-list-entry_${item.id}_${item.artistId}`}
                   sermon={item}
                 />
               );
@@ -107,7 +107,7 @@ export const AllSermonsView = observer(() => {
             onEndReachedThreshold={5}
             onEndReached={() => {
               if (!apiStore.isLoadingAllSermons) {
-                apiStore.updateAllSermons();
+                apiStore.updateAllSermons(true);
               }
             }}
           />

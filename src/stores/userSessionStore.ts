@@ -44,6 +44,12 @@ export class UserSessionStore {
       sortParameter: observable,
       localPathMp3: computed,
       selectedSermonAlbumTitles: computed,
+      selectedSermonIsFavorised: computed,
+      selectedSermonIsDownloaded: computed,
+      selectedSermonIsDownloading: computed,
+      selectedSermonDownloadingObject: computed,
+      selectedSermonIsCurrentlyPlaying: computed,
+      selectedSermonAlbumInfo: computed,
     });
   }
 
@@ -154,6 +160,43 @@ export class UserSessionStore {
     )
       ? `${this.root.storageStore.localPathBase}/${this.selectedSermon.id}.mp3`
       : undefined;
+  }
+
+  get selectedSermonIsFavorised() {
+    return this.root.storageStore.sermonsFavorised.some(
+      item => item.sermon.id === this.selectedSermon?.id,
+    );
+  }
+
+  get selectedSermonIsDownloaded() {
+    return this.root.storageStore.sermonsDownloaded.some(
+      sermon => sermon.id === this.selectedSermon?.id,
+    );
+  }
+
+  get selectedSermonIsDownloading() {
+    return this.root.storageStore.currentlyDownloading.some(
+      item => item.id === this.selectedSermon?.id,
+    );
+  }
+
+  get selectedSermonDownloadingObject() {
+    return this.root.storageStore.currentlyDownloading.find(
+      item => item.id === this.selectedSermon?.id,
+    );
+  }
+
+  get selectedSermonDownloadProgress() {
+    return this.selectedSermonDownloadingObject?.progress;
+  }
+
+  get selectedSermonIsCurrentlyPlaying() {
+    return this.root.playerStore.sermon?.id === this.selectedSermon?.id;
+  }
+
+  get selectedSermonAlbumInfo() {
+    if (!this.selectedSermon?.isPartOfAlbum) return;
+    return `${this.selectedSermon.album.name} ${this.selectedSermon.track}/${this.selectedSermon.album.numTitles}`;
   }
 
   mapTitles = (apiTitles: ApiSermon[]): Sermon[] => {
