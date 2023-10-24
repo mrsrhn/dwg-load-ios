@@ -28,7 +28,7 @@ export const PlaybackSpeedAction = observer(() => {
     };
     const actionSheetCallback = (buttonIndex: number) => {
       if (buttonIndex === 0) return;
-      playerStore.setPlaybackSpeed(PLAYBACK_SPEED_OPTIONS[buttonIndex]);
+      playerStore.setPlaybackSpeed(PLAYBACK_SPEED_OPTIONS[buttonIndex - 1]);
     };
     ActionSheetIOS.showActionSheetWithOptions(options, actionSheetCallback);
   };

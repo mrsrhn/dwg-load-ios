@@ -13,12 +13,12 @@ import {SingleSermonListEntry} from '../lists/singleSermonListEntry';
 import {AlbumListEntry} from '../lists/albumListEntry';
 import {Appearance} from '../../appearance';
 
-import {wait} from './NewSermonsView';
 import Toast from 'react-native-simple-toast';
 import {strings} from '../../strings';
 import {useNetInfo} from '@react-native-community/netinfo';
 import {ListInfo} from '../ListInfo';
 import {useStores} from '../../hooks/useStores';
+import {wait} from '../../common/wait';
 
 export const AllSermonsView = observer(() => {
   const {userSessionStore, apiStore, filterStore} = useStores();

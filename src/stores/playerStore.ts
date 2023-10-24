@@ -119,10 +119,7 @@ export class PlayerStore {
 
   updateSermon = action(
     async (sermon: Sermon, position: number, alternativePath?: string) => {
-      if (!sermon) {
-        console.error('sermon-not-defined');
-        return;
-      }
+      if (!sermon) return;
 
       const track: Track = {
         url: alternativePath ? alternativePath : sermon.url,
@@ -132,13 +129,20 @@ export class PlayerStore {
       };
 
       await TrackPlayer.add(track);
-      await TrackPlayer.skipToNext();
+
+      try {
+        await TrackPlayer.skipToNext();
+      } catch {
+        console.log('no tracks left');
+      }
+
       await TrackPlayer.seekTo(position);
 
       // Save previous played sermon
       if (this.sermon) {
         this.root.storageStore.addSermonPosition(this.sermon, this.position);
       }
+
       runInAction(() => {
         this.sermon = sermon;
       });
@@ -201,6 +205,7 @@ export class PlayerStore {
       if (e.paused) return;
       TrackPlayer.play();
     });
+    TrackPlayer.addEventListener(Event.PlaybackError, console.log);
   };
 
   get isVideo(): boolean | undefined {
