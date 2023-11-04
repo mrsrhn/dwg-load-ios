@@ -6,37 +6,7 @@ import {Appearance} from '../../appearance';
 import LottieView from 'lottie-react-native';
 import AutoScrolling from '../../autoscrolling';
 import {useStores} from '../../hooks/useStores';
-
-const PlayingIndicator = () => {
-  const {playerStore} = useStores();
-
-  const ref = React.createRef<LottieView>();
-
-  React.useEffect(() => {
-    if (ref) {
-      ref.current?.play();
-    }
-  });
-
-  return (
-    !playerStore.isVideo && (
-      <LottieView
-        ref={ref}
-        colorFilters={[
-          {keypath: 'Calque 5 Silhouettes', color: Appearance.lightColor},
-          {keypath: 'Calque 4 Silhouettes', color: Appearance.lightColor},
-          {keypath: 'Calque 3 Silhouettes', color: Appearance.lightColor},
-          {keypath: 'Calque 2 Silhouettes', color: Appearance.lightColor},
-          {keypath: 'Calque 1 Silhouettes', color: Appearance.lightColor},
-        ]}
-        source={require('../../assets/animation.json')}
-        autoPlay={!playerStore.paused}
-        speed={0.5}
-        loop={!playerStore.paused}
-      />
-    )
-  );
-};
+import {State} from 'react-native-track-player';
 
 export const MiniPlayer = observer(() => {
   const {userSessionStore, playerStore} = useStores();
@@ -49,9 +19,11 @@ export const MiniPlayer = observer(() => {
     isVideo,
   } = playerStore;
 
+  const isPlaying = [State.Playing].includes(playerStore.state);
+
   const onPressPlay = () => {
     if (!isVideo) updatePaused(!paused);
-    if (isVideo) userSessionStore.setPlayerModalVisible(true);
+    else userSessionStore.setPlayerModalVisible(true);
   };
 
   const onPressClose = () => {
@@ -64,7 +36,7 @@ export const MiniPlayer = observer(() => {
       backgroundColor: Appearance.baseColor,
       width: `${sermon ? (currentTime / sermon?.playtime) * 100 : 0}%`,
     }),
-    [currentTime],
+    [currentTime, sermon],
   );
 
   return userSessionStore.playerModalVisible || !playerStore.sermon ? null : (
@@ -92,7 +64,7 @@ export const MiniPlayer = observer(() => {
           <Text style={styles.artist}>{playerStore.sermon?.artist?.name}</Text>
         </Pressable>
         <View style={styles.animationWrapper}>
-          {playerStore.paused ? null : <PlayingIndicator />}
+          {isPlaying ? <PlayingIndicator /> : null}
         </View>
 
         <Pressable style={styles.button} onPress={onPressPlay}>
@@ -103,7 +75,7 @@ export const MiniPlayer = observer(() => {
                 size={30}
                 color={pressed ? Appearance.baseColor : Appearance.darkColor}
               />
-            ) : !paused ? (
+            ) : isPlaying ? (
               <MaterialIcon
                 name="pause-circle-outline"
                 size={30}
@@ -123,6 +95,35 @@ export const MiniPlayer = observer(() => {
     </View>
   );
 });
+
+const PlayingIndicator = () => {
+  const {playerStore} = useStores();
+
+  const ref = React.createRef<LottieView>();
+
+  React.useEffect(() => {
+    if (ref) {
+      ref.current?.play();
+    }
+  });
+
+  return !playerStore.isVideo ? (
+    <LottieView
+      ref={ref}
+      colorFilters={[
+        {keypath: 'Calque 5 Silhouettes', color: Appearance.lightColor},
+        {keypath: 'Calque 4 Silhouettes', color: Appearance.lightColor},
+        {keypath: 'Calque 3 Silhouettes', color: Appearance.lightColor},
+        {keypath: 'Calque 2 Silhouettes', color: Appearance.lightColor},
+        {keypath: 'Calque 1 Silhouettes', color: Appearance.lightColor},
+      ]}
+      source={require('../../assets/animation.json')}
+      autoPlay={!playerStore.paused}
+      speed={0.5}
+      loop={!playerStore.paused}
+    />
+  ) : null;
+};
 
 var styles = StyleSheet.create({
   container: {
