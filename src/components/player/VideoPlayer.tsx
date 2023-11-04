@@ -100,9 +100,6 @@ export const VideoPlayer: React.FC = observer(() => {
                 }}
                 onProgress={({currentTime}) => {
                   setCurrentTime(currentTime);
-                  if (sermon) {
-                    storageStore.addSermonPosition(sermon, currentTime);
-                  }
                 }}
                 progressUpdateInterval={1000}
                 onLoadStart={() => setIsBuffering(true)}

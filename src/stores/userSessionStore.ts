@@ -24,6 +24,8 @@ export class UserSessionStore {
   sleepTimerProgress: number | undefined = undefined;
   sleepTimerInterval?: number | NodeJS.Timeout;
 
+  isInitialized = false;
+
   constructor(root: RootStore) {
     this.root = root;
     makeObservable(this, {
@@ -50,6 +52,7 @@ export class UserSessionStore {
       selectedSermonDownloadingObject: computed,
       selectedSermonIsCurrentlyPlaying: computed,
       selectedSermonAlbumInfo: computed,
+      isInitialized: observable,
     });
   }
 
@@ -65,6 +68,10 @@ export class UserSessionStore {
       ) === 'mp4'
     );
   }
+
+  setIsInitialized = action((isInitialized: boolean) => {
+    this.isInitialized = isInitialized;
+  });
 
   setPlayerModalVisible = action((visible: boolean) => {
     this.playerModalVisible = visible;

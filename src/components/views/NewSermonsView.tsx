@@ -5,144 +5,26 @@ import {
   SafeAreaView,
   FlatList,
   RefreshControl,
-  Linking,
 } from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {SingleSermonListEntry} from '../lists/singleSermonListEntry';
 import {AlbumListEntry} from '../lists/albumListEntry';
 import {useNetInfo} from '@react-native-community/netinfo';
-import RNBootSplash from 'react-native-bootsplash';
 import {ListInfo} from '../ListInfo';
 import {strings} from '../../strings';
 import Toast from 'react-native-simple-toast';
-import axios from 'axios';
-import {Endpoints} from '../../stores/apiStore';
-import {Sermon} from '../../types/userSessionStoreTypes';
-import {ApiSermon} from '../../types/apiStoreTypes';
 import {useStores} from '../../hooks/useStores';
-
-export const wait = (timeout: number) => {
-  return new Promise(resolve => setTimeout(resolve, timeout));
-};
-
-const fetchSermon = async (id): Promise<ApiSermon> => {
-  const response = await axios
-    .get(`${strings.url}${Endpoints.title}/${id}`)
-    .then(r => r.data);
-
-  return response;
-};
+import {wait} from '../../common/wait';
 
 export const NewSermonsView = observer(() => {
-  const {userSessionStore, apiStore, storageStore, playerStore} = useStores();
+  const {userSessionStore, apiStore} = useStores();
   const netInfo = useNetInfo();
   const [refreshing, setRefreshing] = React.useState(false);
-  const [isInitialized, setIsInitialized] = React.useState(false);
 
   const [
     onEndReachedCalledDuringMomentum,
     setOnEndReachedCalledDuringMomentum,
   ] = React.useState(false);
-
-  const initWithSermon = (sermon: Sermon, hasBeenPlayedBefore = false) => {
-    apiStore.updateAlbumTitles(sermon.albumId);
-    userSessionStore.setSelectedSermon(sermon);
-
-    const lastPlayedPosition =
-      storageStore.sermonsPositions.find(
-        savedSermon => savedSermon.id === sermon.id,
-      )?.position ?? 0;
-
-    const lastPlayedLocalPath = storageStore.sermonsDownloaded.find(
-      dlSermon => dlSermon.id === sermon.id,
-    )
-      ? `${storageStore.localPathBase}/${sermon.id}${
-          userSessionStore.selectedSermonIsVideo ? '.mp4' : '.mp3'
-        }`
-      : undefined;
-
-    if (userSessionStore.selectedSermonIsVideo) {
-      userSessionStore.setPlayerModalVisible(false);
-      playerStore.clearPlayer();
-    }
-    if (hasBeenPlayedBefore) {
-      playerStore.updateSermon(sermon, lastPlayedPosition, lastPlayedLocalPath);
-    }
-    userSessionStore.setSelectedSermon(sermon);
-  };
-
-  React.useEffect(() => {
-    async function initializeOfflineStuff() {
-      await Promise.all([
-        storageStore.setSermonsDownloadedList(),
-        storageStore.setSermonsFavorisedList(),
-        storageStore.setSermonsHistoryList(),
-        storageStore.setSermonsPositionsList(),
-      ]);
-
-      if (storageStore.sermonsHistory.length) {
-        // Set inital sermon
-        const lastPlayedSermon =
-          storageStore.sermonsHistory[storageStore.sermonsHistory.length - 1]
-            .sermon;
-        initWithSermon(lastPlayedSermon, true);
-      }
-    }
-    async function initialize() {
-      await Promise.all([
-        apiStore.updateAllSermonsTotal(),
-        apiStore.updateNewSermonsTotal(),
-      ]);
-
-      await Promise.all([
-        apiStore.updateNewSermons(),
-        apiStore.updateAllSermons(),
-        apiStore.updateCollections(),
-      ]);
-
-      openSermonFromInitialURL();
-    }
-
-    initializeOfflineStuff();
-
-    if (netInfo.isInternetReachable) {
-      initializeOfflineStuff();
-
-      initialize().finally(async () => {
-        await RNBootSplash.hide({fade: true});
-        setIsInitialized(true);
-      });
-    } else {
-      initializeOfflineStuff().finally(async () => {
-        await RNBootSplash.hide({fade: true});
-        setIsInitialized(true);
-      });
-    }
-  }, [netInfo.isInternetReachable]);
-
-  // Universal Link handling
-  React.useEffect(() => {
-    Linking.addEventListener('url', handleAppStateChange);
-  }, []);
-
-  const openSermonFromInitialURL = async () => {
-    const initial = await Linking.getInitialURL();
-    const titleId = initial?.split('/play/')?.[1];
-    fetchAndOpenSermon(titleId);
-  };
-
-  const handleAppStateChange = async event => {
-    const titleId = event?.url?.split('/play/')?.[1];
-    if (!titleId) return;
-    fetchAndOpenSermon(titleId);
-  };
-
-  const fetchAndOpenSermon = async (titleId: string) => {
-    const linkedSermon = await fetchSermon(titleId);
-    if (!linkedSermon?.id) return;
-    initWithSermon(userSessionStore.mapTitles([linkedSermon])[0]);
-    userSessionStore.setPlayerModalVisible(true);
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -194,7 +76,7 @@ export const NewSermonsView = observer(() => {
             }
           }}
           ListEmptyComponent={
-            isInitialized && !netInfo.isInternetReachable ? (
+            userSessionStore.isInitialized && !netInfo.isInternetReachable ? (
               <ListInfo info={strings.noConnection} />
             ) : null
           }

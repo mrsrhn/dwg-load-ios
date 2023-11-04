@@ -5,6 +5,7 @@ import TrackPlayer, {
   Track,
   Event,
   PlaybackProgressUpdatedEvent,
+  State,
 } from 'react-native-track-player';
 import {setupOptions, trackPlayerOptions} from '../config/trackPlayerOptions';
 
@@ -15,6 +16,7 @@ export class PlayerStore {
   url: string | undefined = undefined;
   paused: boolean = true;
   isBuffering: boolean = false;
+  state = State.None;
   position: number = 0;
   playbackSpeed: number = 1;
 
@@ -93,7 +95,17 @@ export class PlayerStore {
     this.root.storageStore.addSermonToHistoryList(this.sermon);
   };
 
+  setPaused = action((paused: boolean) => {
+    this.paused = paused;
+  });
+
+  setState = action((state: State) => {
+    this.state = state;
+  });
+
   clearPlayer = action(() => {
+    if (!this.sermon) return;
+    this.root.storageStore.addSermonPosition(this.sermon, this.position);
     this.sermon = undefined;
     this.url = undefined;
     this.updatePaused(true);
@@ -119,10 +131,7 @@ export class PlayerStore {
 
   updateSermon = action(
     async (sermon: Sermon, position: number, alternativePath?: string) => {
-      if (!sermon) {
-        console.error('sermon-not-defined');
-        return;
-      }
+      if (!sermon) return;
 
       const track: Track = {
         url: alternativePath ? alternativePath : sermon.url,
@@ -132,13 +141,20 @@ export class PlayerStore {
       };
 
       await TrackPlayer.add(track);
-      await TrackPlayer.skipToNext();
+
+      try {
+        await TrackPlayer.skipToNext();
+      } catch {
+        console.log('no tracks left');
+      }
+
       await TrackPlayer.seekTo(position);
 
       // Save previous played sermon
       if (this.sermon) {
         this.root.storageStore.addSermonPosition(this.sermon, this.position);
       }
+
       runInAction(() => {
         this.sermon = sermon;
       });
@@ -164,7 +180,6 @@ export class PlayerStore {
     } else {
       TrackPlayer.play();
     }
-    this.paused = paused;
     if (paused && this.sermon) {
       this.root.storageStore.addSermonPosition(this.sermon, this.position);
     }
@@ -187,9 +202,9 @@ export class PlayerStore {
     TrackPlayer.addEventListener(Event.RemotePlay, () =>
       this.updatePaused(false),
     );
-    TrackPlayer.addEventListener(Event.RemotePause, () =>
-      this.updatePaused(true),
-    );
+    TrackPlayer.addEventListener(Event.RemotePause, () => {
+      this.updatePaused(true);
+    });
     TrackPlayer.addEventListener(Event.RemoteJumpForward, () =>
       this.seek(this.position + 10),
     );
@@ -200,6 +215,20 @@ export class PlayerStore {
     TrackPlayer.addEventListener(Event.RemoteDuck, e => {
       if (e.paused) return;
       TrackPlayer.play();
+    });
+    TrackPlayer.addEventListener(Event.PlaybackError, console.log);
+    TrackPlayer.addEventListener(Event.PlaybackState, e => {
+      this.setState(e.state);
+
+      switch (e.state) {
+        case State.Stopped:
+        case State.Paused:
+          this.setPaused(true);
+          break;
+        case State.Playing:
+          this.setPaused(false);
+          break;
+      }
     });
   };
 
