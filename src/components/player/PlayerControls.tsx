@@ -3,25 +3,26 @@ import {observer} from 'mobx-react-lite';
 import {StyleSheet, View, Pressable, ActivityIndicator} from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {Appearance} from '../../appearance';
+import {useStores} from '../../hooks/useStores';
+import {State} from 'react-native-track-player';
 
 interface PlayerControlsProps {
-  isPlaying: boolean;
-  isBuffering: boolean;
   onPressPlay: () => void;
   onPressForward: () => void;
   onPressReplay: () => void;
-  isDeactivated: boolean;
 }
 
 export const PlayerControls: React.FC<PlayerControlsProps> = observer(props => {
-  const {
-    isPlaying,
-    onPressPlay,
-    onPressForward,
-    onPressReplay,
-    isBuffering,
-    isDeactivated,
-  } = props;
+  const {onPressPlay, onPressForward, onPressReplay} = props;
+
+  const {playerStore, userSessionStore} = useStores();
+  const {selectedSermonIsCurrentlyPlaying} = userSessionStore;
+
+  const isBuffering = [State.Buffering, State.Connecting].includes(
+    playerStore.state,
+  );
+
+  const isPlaying = [State.Playing].includes(playerStore.state);
 
   return (
     <React.Fragment>
@@ -30,30 +31,25 @@ export const PlayerControls: React.FC<PlayerControlsProps> = observer(props => {
           <MaterialIcon
             name="replay-10"
             size={50}
-            color={isDeactivated ? Appearance.greyColor : Appearance.darkColor}
+            color={Appearance.darkColor}
           />
         </Pressable>
         <View style={styles.playButton}>
-          {isBuffering && (
+          {isBuffering ? (
             <ActivityIndicator size="large" color={Appearance.darkColor} />
-          )}
-          {!isBuffering && (
+          ) : (
             <Pressable style={styles.button} onPress={onPressPlay}>
-              {isPlaying ? (
+              {selectedSermonIsCurrentlyPlaying && isPlaying ? (
                 <MaterialIcon
                   name="pause-circle-outline"
                   size={70}
-                  color={
-                    isDeactivated ? Appearance.greyColor : Appearance.darkColor
-                  }
+                  color={Appearance.darkColor}
                 />
               ) : (
                 <MaterialIcon
                   name="play-circle-outline"
                   size={70}
-                  color={
-                    isDeactivated ? Appearance.greyColor : Appearance.darkColor
-                  }
+                  color={Appearance.darkColor}
                 />
               )}
             </Pressable>
@@ -63,7 +59,7 @@ export const PlayerControls: React.FC<PlayerControlsProps> = observer(props => {
           <MaterialIcon
             name="forward-10"
             size={50}
-            color={isDeactivated ? Appearance.greyColor : Appearance.darkColor}
+            color={Appearance.darkColor}
           />
         </Pressable>
       </View>

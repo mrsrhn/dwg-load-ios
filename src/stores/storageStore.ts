@@ -366,22 +366,20 @@ export class StorageStore {
   });
 
   addSermonToHistoryList = action(async (sermon: Sermon) => {
+    console.log('add sermon to history: ', sermon.title, sermon.id);
     try {
-      const isSermonSaved =
-        this.sermonsHistory.findIndex(
-          sermonInHistory =>
-            sermonInHistory.sermon !== undefined &&
-            sermonInHistory.sermon.id === sermon.id &&
-            sermonInHistory.date === LocalDate.now().toString(),
-        ) >= 0;
+      const cleanedSermonHistory = this.sermonsHistory.filter(
+        sermonInHistory =>
+          sermonInHistory.sermon.id !== sermon.id ||
+          (sermonInHistory.sermon.id === sermon.id &&
+            sermonInHistory.date !== LocalDate.now().toString()),
+      );
 
-      if (!isSermonSaved) {
-        await this.persistItemInStorage(this.sermonsHistoryStorageKey, [
-          ...this.sermonsHistory,
-          {sermon: sermon, date: LocalDate.now()},
-        ]);
-        this.setSermonsHistoryList();
-      }
+      await this.persistItemInStorage(this.sermonsHistoryStorageKey, [
+        ...cleanedSermonHistory,
+        {sermon: sermon, date: LocalDate.now()},
+      ]);
+      this.setSermonsHistoryList();
     } catch (err) {
       console.log(err);
     }
@@ -420,6 +418,7 @@ export class StorageStore {
   };
 
   addSermonPosition = action(async (sermon: Sermon, position: number) => {
+    console.log('save position: ', sermon.title, sermon.id, position);
     try {
       const isSermonsPositionSaved =
         this.sermonsPositions.findIndex(

@@ -10,7 +10,6 @@ import {ModalHeader} from '../ModalHeader';
 import {ArtistTitle} from '../views/ArtistTitle';
 import {Appearance} from '../../appearance';
 import {CommentIcon} from '../views/CommentIcon';
-import {useNetInfo} from '@react-native-community/netinfo';
 import {useStores} from '../../hooks/useStores';
 import {AlbumTitles} from './AlbumTitles';
 
@@ -22,17 +21,10 @@ export const Player: React.FC<PlayerProps> = observer(props => {
   const [initialPosition, setInitialPosition] = useState(0);
   const {playerStore, userSessionStore, storageStore} = useStores();
   const {selectedSermon, selectedSermonIsCurrentlyPlaying} = userSessionStore;
-  const netInfo = useNetInfo();
 
   if (!selectedSermon) return null;
 
-  const {
-    paused,
-    position: currentTime,
-    updatePaused,
-    seek,
-    isBuffering,
-  } = playerStore;
+  const {paused, position: currentTime, updatePaused, seek} = playerStore;
 
   useEffect(() => {
     return () => {
@@ -92,8 +84,6 @@ export const Player: React.FC<PlayerProps> = observer(props => {
           seekTo={selectedSermonIsCurrentlyPlaying ? seek : setInitialPosition}
         />
         <PlayerControls
-          isPlaying={selectedSermonIsCurrentlyPlaying && !paused}
-          isBuffering={isBuffering}
           onPressPlay={onPlayButtonPress}
           onPressForward={() =>
             selectedSermonIsCurrentlyPlaying
@@ -104,10 +94,6 @@ export const Player: React.FC<PlayerProps> = observer(props => {
             selectedSermonIsCurrentlyPlaying
               ? seek(currentTime - 10)
               : setInitialPosition(initialPosition - 10)
-          }
-          isDeactivated={
-            !netInfo.isInternetReachable &&
-            !userSessionStore.selectedSermonIsDownloaded
           }
         />
         <AlbumTitles activateCloseGesture={props.activateCloseGesture} />
