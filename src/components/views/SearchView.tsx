@@ -8,42 +8,44 @@ import {
 } from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {SingleSermonListEntry} from '../lists/singleSermonListEntry';
-import SearchBar from 'react-native-search-bar';
 import {ListInfo} from '../ListInfo';
 import {strings} from '../../strings';
 import {useStores} from '../../hooks/useStores';
 import {Appearance} from '../../appearance';
+import SearchBar from 'react-native-dynamic-search-bar';
+import {useDebouncedValue} from '../../hooks/useDebouncedValue';
 
 export const SearchView = observer(() => {
   const {userSessionStore, apiStore} = useStores();
   const [initiallyLoaded, setInitiallyLoaded] = React.useState(true);
-  const searchBar = React.useRef(null);
-  const [searchString, setSearchString] = React.useState('');
-
+  const [debouncedValue, setDebouncedValue] = useDebouncedValue('', 1000);
   const [
     onEndReachedCalledDuringMomentum,
     setOnEndReachedCalledDuringMomentum,
   ] = React.useState(true);
 
-  const onSearch = (givenString: string) => {
+  const search = React.useCallback(() => {
     setInitiallyLoaded(false);
-    apiStore.updateSearchedSermons(givenString, true);
-    searchBar.current.unFocus();
+    apiStore.updateSearchedSermons(debouncedValue, true);
+  }, [debouncedValue]);
+
+  React.useEffect(() => {
+    search();
+  }, [search]);
+
+  const handleOnChangeText = (text: string) => {
+    setDebouncedValue(text);
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <SearchBar
-        ref={searchBar}
-        cancelButtonText={strings.cancel}
-        placeholder={searchString || strings.enterSearchString}
-        onChangeText={text => setSearchString(text)}
-        onSearchButtonPress={text => onSearch(text)}
-        textFieldBackgroundColor="white"
-        textColor="black"
-        searchBarStyle="prominent"
-        barTintColor="white"
-        tintColor={Appearance.darkColor}
+        style={styles.searchBar}
+        searchIconImageStyle={{tintColor: Appearance.greyColor}}
+        clearIconImageStyle={{tintColor: Appearance.baseColor}}
+        placeholderTextColor={Appearance.greyColor}
+        placeholder={strings.search}
+        onChangeText={handleOnChangeText}
       />
       <View style={styles.container}>
         <FlatList
@@ -56,7 +58,7 @@ export const SearchView = observer(() => {
             <RefreshControl
               refreshing={apiStore.isLoadingSearch}
               onRefresh={async () => {
-                onSearch(searchString);
+                search();
               }}
             />
           }
@@ -77,7 +79,7 @@ export const SearchView = observer(() => {
             if (!onEndReachedCalledDuringMomentum) {
               if (!apiStore.isLoadingSearch) {
                 setOnEndReachedCalledDuringMomentum(true);
-                apiStore.updateSearchedSermons(searchString);
+                apiStore.updateSearchedSermons(debouncedValue);
               }
             }
           }}
@@ -90,5 +92,11 @@ export const SearchView = observer(() => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  searchBar: {
+    width: '100%',
+    borderRadius: 0,
+    borderBottomColor: Appearance.greyColor,
+    borderBottomWidth: 1,
   },
 });
