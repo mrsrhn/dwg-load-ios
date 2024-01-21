@@ -208,6 +208,7 @@ export class UserSessionStore {
 
   mapTitles = (apiTitles: ApiSermon[]): Sermon[] => {
     return apiTitles.map(sermon => {
+      sermon.Album = sermon.Album ?? {id: 0};
       return {
         id: sermon.id,
         title: sermon.title,
