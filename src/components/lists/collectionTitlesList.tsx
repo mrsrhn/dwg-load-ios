@@ -3,7 +3,6 @@ import {StyleSheet, View, SafeAreaView, FlatList} from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {SingleSermonListEntry} from './singleSermonListEntry';
 import {RouteProp} from '@react-navigation/native';
-import {AlbumListEntry} from './albumListEntry';
 import {useStores} from '../../hooks/useStores';
 
 type RootStackParamList = {
@@ -30,21 +29,12 @@ export const CollectionTitlesList = observer(({route}: Props) => {
       <View style={styles.container}>
         <FlatList
           data={collectionList.titles}
-          renderItem={({item}) => {
-            return item.isPartOfAlbum ? (
-              <AlbumListEntry
-                key={`album-list-entry_${item.id}_${item.artistId}`}
-                album={item.album}
-                artist={item.artist?.name}
-                genre={item.Genres?.length ? item.Genres[0].name : undefined}
-              />
-            ) : (
-              <SingleSermonListEntry
-                key={`singleSermonListEntry_${item.id}`}
-                sermon={item}
-              />
-            );
-          }}
+          renderItem={({item}) => (
+            <SingleSermonListEntry
+              key={`singleSermonListEntry_${item.id}`}
+              sermon={item}
+            />
+          )}
         />
       </View>
     </SafeAreaView>
