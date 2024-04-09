@@ -267,7 +267,12 @@ export class ApiStore {
         this.searchedSermonsLoadedPages = this.searchedSermonsLoadedPages + 1;
         this.searchedSermons = newSearch
           ? titles
-          : this.searchedSermons.concat(titles);
+          : this.searchedSermons.concat(
+              titles.filter(
+                title =>
+                  !this.searchedSermons.some(sermon => sermon.id === title.id),
+              ),
+            );
         this.isLoadingSearch = false;
       });
     },
