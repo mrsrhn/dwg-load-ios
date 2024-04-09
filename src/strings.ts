@@ -59,7 +59,7 @@ const languages = {
     today: 'Heute',
     yesterday: 'Gestern',
     info1:
-      'DWG Load ist die Predigtdatenbank von DWG Radio. Gegenwärtig stehen über 15.000 Titel zum Hören, Speichern und Teilen bereit.',
+      'DWG Load ist die Predigtdatenbank von DWG Radio. Gegenwärtig stehen über 17.000 Titel zum Hören, Speichern und Teilen bereit.',
     info2:
       'Ausnahmslos alle Prediger sind bibeltreue Nachfolger Jesu Christi. Regelmäßig kommen weitere Titel dazu.',
     info3:
