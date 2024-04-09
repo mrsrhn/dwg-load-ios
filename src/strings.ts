@@ -112,7 +112,7 @@ const languages = {
       {url: 'http://load.dwgradio.net/cz', title: 'DWG Load na internetu'},
       {url: 'http://radio.dwgradio.net/cz', title: 'DWG Radio na internetu'},
     ],
-    additionalLinks: 'Weiterführende Links',
+    additionalLinks: 'Další odkazy',
     content: 'Obsah',
     back: 'Zpět',
     theSearch: 'Hledat',
