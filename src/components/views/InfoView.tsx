@@ -31,21 +31,23 @@ export const InfoView = observer(() => {
             <Text style={styles.text}>{strings.info2}</Text>
             <Text style={styles.text}>{strings.info3}</Text>
             <Text style={styles.title}>{strings.contact}</Text>
-            <Text
-              style={styles.url}
-              onPress={() => Linking.openURL('mailto:info@dwgradio.net')}>
-              {strings.contactUs}
-            </Text>
-            <Text
-              style={styles.url}
-              onPress={() => Linking.openURL('http://load.dwgradio.net')}>
-              {strings.dwgLoadInternet}
-            </Text>
-            <Text
-              style={styles.url}
-              onPress={() => Linking.openURL('http://radio.dwgradio.net')}>
-              {strings.dwgRadioInternet}
-            </Text>
+            {strings.contactButtons.map((button, index) => (
+              <Text
+                key={`contactButton_${index}`}
+                style={styles.url}
+                onPress={() => Linking.openURL(button.url)}>
+                {button.title}
+              </Text>
+            ))}
+            <Text style={styles.title}>{strings.additionalLinks}</Text>
+            {strings.additionalLinksButtons.map((button, index) => (
+              <Text
+                key={`additionalLinkButton_${index}`}
+                style={styles.url}
+                onPress={() => Linking.openURL(button.url)}>
+                {button.title}
+              </Text>
+            ))}
             <Text style={styles.title}>{strings.donation}</Text>
             <Text style={styles.text}>{strings.donationInfo1}</Text>
             <Text style={styles.text}>{strings.donationInfo2}</Text>
