@@ -54,7 +54,7 @@ export const HistoryView = observer(() => {
                   : LocalDate.now().minusDays(1).equals(LocalDate.parse(title))
                   ? strings.yesterday
                   : LocalDate.parse(title).format(
-                      DateTimeFormatter.ofPattern('MM.dd.yyyy'),
+                      DateTimeFormatter.ofPattern('dd.MM.yyyy'),
                     )}
               </Text>
             );
