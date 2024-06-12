@@ -399,7 +399,7 @@ PODS:
     - React-perflogger (= 0.70.8)
   - ReactNativeLocalization (2.3.1):
     - React-Core
-  - RNBootSplash (4.3.3):
+  - RNBootSplash (4.7.5):
     - React-Core
   - RNCAsyncStorage (1.17.11):
     - React-Core
@@ -687,7 +687,7 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: f795fd426264709901c09432c6ce072f8400147e
   ReactCommon: c440e7f15075e81eb29802521c58a1f38b1aa903
   ReactNativeLocalization: 076497d7ca70341c751cd3b3e7c86187332a182d
-  RNBootSplash: 7e91ea56c7010aae487489789dbe212e8c905a0c
+  RNBootSplash: 85f6b879c080e958afdb4c62ee04497b05fd7552
   RNCAsyncStorage: 8616bd5a58af409453ea4e1b246521bb76578d60
   RNCClipboard: 2834e1c4af68697089cdd455ee4a4cdd198fa7dd
   RNCPicker: 0bf8ef8f7800524f32d2bb2a8bcadd53eda0ecd1

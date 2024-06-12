@@ -216,7 +216,13 @@ export class PlayerStore {
       if (e.paused) return;
       TrackPlayer.play();
     });
-    TrackPlayer.addEventListener(Event.PlaybackError, console.log);
+    TrackPlayer.addEventListener(Event.PlaybackError, e => {
+      console.log('PlaybackError: ' + e);
+      runInAction(() => {
+        this.sermon = undefined;
+        this.state = State.Paused;
+      });
+    });
     TrackPlayer.addEventListener(Event.PlaybackState, e => {
       this.setState(e.state);
 

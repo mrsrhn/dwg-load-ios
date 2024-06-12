@@ -24,6 +24,7 @@ export const PlayerControls: React.FC<PlayerControlsProps> = observer(props => {
 
   const isPlaying = [State.Playing].includes(playerStore.state);
 
+  console.log('playerStore.state: ' + playerStore.state);
   return (
     <React.Fragment>
       <View style={styles.container}>

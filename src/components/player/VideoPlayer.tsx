@@ -118,7 +118,7 @@ export const VideoPlayer: React.FC = observer(() => {
                   } else {
                     Toast.showWithGravity(strings.error, 2, Toast.BOTTOM);
                   }
-                  console.log(e);
+                  console.log('Video Player Error: ', e);
                   reload();
                   updatePaused(true);
                   playerStore.clearPlayer();
